@@ -2,8 +2,8 @@
 
 <font size=5>MuseV: Infinite-length and High Fidelity Virtual Human Video Generation with Parallel Denoising
 </br>
-Zhiqiang Xia<sup>*</sup>,
-Zhaokang Chen<sup>*</sup>,
+Zhiqiang Xia <sup>\*</sup>,
+Zhaokang Chen<sup>\*</sup>,
 Bin Wu<sup>†</sup>,
 Chao Li,
 Kwok-Wai Hung,
