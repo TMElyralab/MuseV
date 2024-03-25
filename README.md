@@ -56,7 +56,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/yongen.jpeg width="250">
     </td>
     <td>
-      <video src="./data/result_video/yongen.mp4" width="300" controls preload></video>
+      [![Video Title](https://img.youtube.com/vi/Rsm46lDkJZE/0.jpg)](https://www.youtube.com/watch?v=Rsm46lDkJZE)
     </td>
   </tr>
 
