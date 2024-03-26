@@ -176,7 +176,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/Mona_Lisa.jpg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/af0bc7e0-8c2c-445a-b990-b0f152d50671" width="100" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/1ce11da6-14c6-4dcd-b7f9-7a5f060d71fb" width="100" controls preload></video>
     </td>   
     <td>
     (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
