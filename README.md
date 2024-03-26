@@ -19,7 +19,7 @@ We have setup the world simulator vision since March 2023, believing diffusion m
 
 Our next move will switch to the promising diffusion+transformer scheme. Please stay tuned.
 
-We will soon release `MuseTalk`, a diffusion-baesd lip sync model, which can be applied with MuseV as a complete virtual human generation solution. Please stay tuned! 
+We will soon release `MuseTalk`, a real-time lip sync model, which can be applied with MuseV as a complete virtual human generation solution. Please stay tuned!
 
 # Intro
 `MuseV` is a diffusion-based virtual human video generation framework, which 
@@ -28,7 +28,8 @@ We will soon release `MuseTalk`, a diffusion-baesd lip sync model, which can be 
 3. supports Image2Video, Text2Image2Video, Video2Video.
 4. compatible with the Stable Diffusion ecosystem, including `base_model`, `lora`, `controlnet`, etc. 
 5. supports multi reference image technology, including `IPAdapter`, `ReferenceOnly`, `ReferenceNet`, `IPAdapterFaceID`.
-6. training codes (comming very soon).
+6. generate video only in **10** timesteps.
+7. training codes (comming very soon).
 
 
 ## Model
@@ -58,7 +59,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
     </td>
     <td >
      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/732cf1fd-25e7-494e-b462-969c9425d277" width="100" controls preload></video>
-    </td>)
+    </td>
     <td>(masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
     soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
     </td>
@@ -76,6 +77,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
     soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
     </td>
   </tr>
+
   <tr>
     <td>
       <img src=./data/images/seaside4.jpeg width="400">
@@ -171,7 +173,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
 
   <tr>
     <td>
-      <img src=./data/images/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg width="400">
+      <img src=./data/images/Mona_Lisa.jpg width="400">
     </td>
     <td>
       <video src="https://github.com/TMElyralab/MuseV/assets/163980830/af0bc7e0-8c2c-445a-b990-b0f152d50671" width="100" controls preload></video>
