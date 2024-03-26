@@ -4,6 +4,8 @@
 [submodule "controlnet_aux"]
 	path = controlnet_aux
 	url = https://github.com/TMElyralab/controlnet_aux.git
+	branch = tme
 [submodule "diffusers"]
 	path = diffusers
 	url = https://github.com/TMElyralab/diffusers.git
+	branch = tme
