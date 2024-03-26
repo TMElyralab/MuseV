@@ -47,9 +47,9 @@ Bellow Case could be found in `configs/tasks/example.yaml`
 
 <table class="center">
   <tr style="font-weight: bolder;text-align:center;">
-        <td width="40%">image</td>
-        <td width="50%">video </td>
-        <td width="10%">prompt</td>
+        <td width="50%">image</td>
+        <td width="45%">video </td>
+        <td width="5%">prompt</td>
   </tr>
 
   <tr>
@@ -57,7 +57,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/yongen.jpeg width="400">
     </td>
     <td >
-     <video src="https://github.com/TMElyralab/MuseV/assets/163980830/732cf1fd-25e7-494e-b462-969c9425d277" width="200" controls preload></video>
+     <video src="https://github.com/TMElyralab/MuseV/assets/163980830/732cf1fd-25e7-494e-b462-969c9425d277" width="100" controls preload></video>
     </td>)
     <td>(masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
     soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
@@ -69,7 +69,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/jinkesi2.jpeg width="400">
     </td>
     <td>
-     <video src="https://github.com/TMElyralab/MuseV/assets/163980830/62b533d3-95f3-48db-889d-75dde1ad04b7" width="200" controls preload></video>
+     <video src="https://github.com/TMElyralab/MuseV/assets/163980830/62b533d3-95f3-48db-889d-75dde1ad04b7" width="100" controls preload></video>
     </td>
     <td>
     (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
@@ -81,7 +81,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/seaside4.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/bb45abb9-5477-4a2a-8f67-7d88195e515f" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/bb45abb9-5477-4a2a-8f67-7d88195e515f" width="100" controls preload></video>
     </td>   
     <td>
     (masterpiece, best quality, highres:1), peaceful beautiful sea scene
@@ -93,7 +93,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/real_girl_seaside2.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/5fb4e5e8-4a84-47e8-a0d1-7aa24a48e2b8" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/5fb4e5e8-4a84-47e8-a0d1-7aa24a48e2b8" width="100" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1), peaceful beautiful sea scene
@@ -104,7 +104,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/seaside_girl.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/d0f3b401-09bf-4018-81c3-569ec24a4de9" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/d0f3b401-09bf-4018-81c3-569ec24a4de9" width="100" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1), peaceful beautiful sea scene
@@ -116,7 +116,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/boy_play_guitar.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/61bf955e-7161-44c8-a498-8811c4f4eb4f" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/61bf955e-7161-44c8-a498-8811c4f4eb4f" width="100" controls preload></video>
     </td>
     <td>
        (masterpiece, best quality, highres:1), playing guitar
@@ -127,7 +127,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/girl_play_guitar2.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/40982aa7-9f6a-4e44-8ef6-3f185d284e6a" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/40982aa7-9f6a-4e44-8ef6-3f185d284e6a" width="100" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1), playing guitar
@@ -138,7 +138,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/boy_play_guitar2.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/69ea9d0c-5ed0-44b9-bca9-a4829c8d8b68" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/69ea9d0c-5ed0-44b9-bca9-a4829c8d8b68" width="100" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1), playing guitar
@@ -149,7 +149,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/girl_play_guitar4.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/d242e8a4-08ab-474f-b4a8-b718780d2991" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/d242e8a4-08ab-474f-b4a8-b718780d2991" width="100" controls preload></video>
     </td>
     <td>
     (masterpiece, best quality, highres:1), playing guitar
@@ -161,7 +161,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/dufu.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/28294baa-b996-420f-b1fb-046542adf87d" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/28294baa-b996-420f-b1fb-046542adf87d" width="100" controls preload></video>
     </td>
     <td>
     (masterpiece, best quality, highres:1),(1man, solo:1),(beautiful face,
@@ -174,7 +174,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/af0bc7e0-8c2c-445a-b990-b0f152d50671" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/af0bc7e0-8c2c-445a-b990-b0f152d50671" width="100" controls preload></video>
     </td>   
     <td>
     (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
@@ -186,7 +186,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/Portrait-of-Dr.-Gachet.jpg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/4072410a-ecea-4ee5-a9b4-735f9f462d51" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/4072410a-ecea-4ee5-a9b4-735f9f462d51" width="100" controls preload></video>
     </td>
     <td>
   (masterpiece, best quality, highres:1),(1man, solo:1),(beautiful face,
@@ -198,7 +198,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/Self-Portrait-with-Cropped-Hair.jpg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/5148beda-a1e1-44f0-ad84-2fb99ad73a11" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/5148beda-a1e1-44f0-ad84-2fb99ad73a11" width="100" controls preload></video>
     </td>
     <td>
   (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
@@ -210,7 +210,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/The-Laughing-Cavalier.jpg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/df1c5943-15a3-41f5-afe7-e7497c81836d" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/df1c5943-15a3-41f5-afe7-e7497c81836d" width="100" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
@@ -233,7 +233,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/waterfall4.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/852daeb6-6b58-4931-81f9-0dddfa1b4ea5" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/852daeb6-6b58-4931-81f9-0dddfa1b4ea5" width="100" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1), peaceful beautiful waterfall, an
@@ -246,7 +246,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/river.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/d5cb2798-b5ce-497a-a058-ae63d664028e" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/d5cb2798-b5ce-497a-a058-ae63d664028e" width="100" controls preload></video>
     </td>
     <td>(masterpiece, best quality, highres:1), peaceful beautiful river
     </td>
@@ -257,7 +257,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/seaside2.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/4a4d527a-6203-411f-afe9-31c992d26816" width="200" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/4a4d527a-6203-411f-afe9-31c992d26816" width="100" controls preload></video>
     </td>
     <td>(masterpiece, best quality, highres:1), peaceful beautiful sea scene
     </td>
