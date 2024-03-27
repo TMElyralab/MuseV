@@ -12,7 +12,7 @@ Wenjiang Zhou
 (<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author)
 </font>
 
-**[Project](comming soon)**  **Technical report (comming soon)**
+**[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**    **[project](comming soon)**    **Technical report (comming soon)**
 
 
 We have setup **the world simulator vision since March 2023, believing diffusion models can simulate the world**. `MuseV` was a milestone achieved around **July 2023**. Amazed by the progress of Sora, we decided to opensource `MuseV`, hopefully it will benefit the community. Next we will move on to the promising diffusion+transformer scheme.
@@ -292,7 +292,7 @@ In `duffy` case, pose of the vision condition frame is not aligned with of the f
 ### MuseTalk
 
 <table class="center">
-    <tr style="font-weight: bolder;text-align:center;">
+    <tr style="font-weight: bolder;">
         <td width="35%">name</td>
         <td width="50%">video</td>
     </tr>
@@ -302,15 +302,23 @@ In `duffy` case, pose of the vision condition frame is not aligned with of the f
        talk
     </td>
     <td>
-      <video src="" width="100" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/951188d1-4731-4e7f-bf40-03cacba17f2f" width="100" controls preload></video>
     </td>
-
+  </tr>
+    <tr>
+    <td>
+       talk
+    </td>
+    <td>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/ba0396ab-8aba-4440-803c-18b078ae1dd9" width="100" controls preload></video>
+    </td>
+  </tr>
   <tr>
     <td>
        sing
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/951188d1-4731-4e7f-bf40-03cacba17f2f" width="100" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/50b8ffab-9307-4836-99e5-947e6ce7d112" width="100" controls preload></video>
     </td>
   </tr>
 </table >
@@ -455,6 +463,11 @@ Most of paramters are same as `musev_text2video`. Special parameters of `video2v
 - `controlnet_name`：whether use `controlnet condition`, such as `dwpose,depth`.
 - `video_is_middle`: `video_path` is `rgb video` or  `controlnet_middle_video`. could set for every `test_data` in test_data_path.
 - `video_has_condition`: whether condtion_images is aligned with the first frame of video_path. If Not, firstly generate `condition_images` and align with concatation. set in  `test_data`。
+
+all controlnet_names refer to [mmcm](https://github.com/TMElyralab/MMCM/blob/main/mmcm/vision/feature_extractor/controlnet.py#L513)
+```python
+['pose', 'pose_body', 'pose_hand', 'pose_face', 'pose_hand_body', 'pose_hand_face', 'dwpose', 'dwpose_face', 'dwpose_hand', 'dwpose_body', 'dwpose_body_hand', 'canny', 'tile', 'hed', 'hed_scribble', 'depth', 'pidi', 'normal_bae', 'lineart', 'lineart_anime', 'zoe', 'sam', 'mobile_sam', 'leres', 'content', 'face_detector']
+```
 
 ### musev_referencenet_pose
 only used for `pose2video`
