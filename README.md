@@ -256,6 +256,65 @@ Bellow Case could be found in `configs/tasks/example.yaml`
 
 ### VideoMiddle2Video
 
+**pose2video**
+<table class="center">
+    <tr style="font-weight: bolder;text-align:center;">
+        <td width="35%">image</td>
+        <td width="50%">video</td>
+        <td width="15%">prompt</td>
+    </tr>
+
+  <tr>
+    <td>
+       None, mean generate first frame with extra text2image module
+    </td>
+    <td>
+      <video src="" width="100" controls preload></video>
+    </td>
+    <td>
+      (masterpiece, best quality, highres:1)
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <img src=./data/images/duffy.png width="400">
+    </td>
+    <td>
+      <video src="" width="100" controls preload></video>
+    </td>
+    <td>
+      (masterpiece, best quality, highres:1)
+    </td>
+  </tr>
+</table >
+
+### MuseTalk
+**pose2video**
+<table class="center">
+    <tr style="font-weight: bolder;text-align:center;">
+        <td width="35%">name</td>
+        <td width="50%">video</td>
+    </tr>
+
+  <tr>
+    <td>
+       talking
+    </td>
+    <td>
+      <video src="" width="100" controls preload></video>
+    </td>
+
+  <tr>
+    <td>
+       sing
+    </td>
+    <td>
+      <video src="" width="100" controls preload></video>
+    </td>
+  </tr>
+</table >
+
 
 # News
 - [03/22/2024] release `MuseV` project and trained model `musev`, `muse_referencenet`.
@@ -383,7 +442,7 @@ support `referencenet`, `IPAdapter`, `IPAdapterFaceID`, `Facein`.
 
 #### video2video
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  bilibili_queencard   --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  wave_hand   --fps 12 --time_size 12
 ```
 **import parameters**
 
@@ -397,7 +456,7 @@ Most of paramters are same as `musev_text2video`. Special parameters of `video2v
 ### musev_referencenet_pose
 only used for `pose2video`
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  wavehand   --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  wave_hand   --fps 12 --time_size 12
 ```
 
 ### musev
@@ -408,7 +467,7 @@ python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --
 ```
 #### video2video
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  bilibili_queencard   --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  wave_hand   --fps 12 --time_size 12
 ```
 
 
