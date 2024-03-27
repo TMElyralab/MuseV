@@ -272,7 +272,7 @@ In `duffy` mode, pose of the vision condition frame is not aligned with the firs
       <img src=./data/images/cyber_girl.png width="200">
     </td>
     <td>
-      <video src="" width="100" controls preload></video>
+        <video src="https://github.com/TMElyralab/MuseV/assets/163980830/484cc69d-c316-4464-a55b-3df929780a8e" width="100" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1)
