@@ -29,6 +29,9 @@ We will soon release `MuseTalk`, a real-time high quality lip sync model, which 
 6. training codes (comming very soon).
 
 
+# News
+- [03/27/2024] release `MuseV` project and trained model `musev`, `muse_referencenet`.
+
 ## Model
 ### Overview of model structure
 ![model_structure](./data/models/musev_structure.png)
@@ -323,9 +326,6 @@ In `duffy` case, pose of the vision condition frame is not aligned with of the f
   </tr>
 </table >
 
-
-# News
-- [03/22/2024] release `MuseV` project and trained model `musev`, `muse_referencenet`.
 
 # TODO:
 - [ ] technical report (comming soon).
