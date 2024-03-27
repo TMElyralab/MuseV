@@ -204,7 +204,7 @@ class DiffusersPipelinePredictor(object):
             facein_image_proj.eval()
 
         if isinstance(vae_model, str):
-            # TODO: 鲁棒性不好，待后续更新
+            # TODO: poor implementation, to improve
             if "consistency" in vae_model:
                 vae = ConsistencyDecoderVAE.from_pretrained(vae_model)
             else:
@@ -262,6 +262,7 @@ class DiffusersPipelinePredictor(object):
             # pipeline.scheduler = DDIMScheduler.from_config(
             #     pipeline.scheduler.config,
             # 该部分会影响生成视频的亮度，不适用于首帧给定的视频生成
+            # this part will change brightness of video, not suitable for image2video mode
             # rescale_betas_zero_snr affect the brightness of the generated video, not suitable for vision condition images mode
             #     # rescale_betas_zero_snr=True,
             # )
@@ -427,7 +428,14 @@ class DiffusersPipelinePredictor(object):
         interpolation_factor=1,
         # parallel_denoise parameter end
     ):
-        """类似img2img pipeline
+        """
+        generate long video with end2end mode
+        1. prepare vision condition image by assingning, redraw, or generation with text2image module with skip_temporal_layer=True;
+        2. use image or latest of vision condition image to generate first shot;
+        3. use last n (1) image or last latent of last shot as new vision condition latent to generate next shot
+        4. repeat n_batch times between 2 and 3
+
+        类似img2img pipeline
         refer_image和ip_adapter_image的来源：
         1. 输入给定；
         2. 当未输入时，纯text2video生成首帧，并赋值更新refer_image和ip_adapter_image;
@@ -445,9 +453,9 @@ class DiffusersPipelinePredictor(object):
         3. given from input paramter, but still redraw, update with redrawn vis cond image.
         """
         run_video_length = video_length
-        # 生成首帧 start
-        # 无第一帧输入的重绘，根据refer_image和ip_adapter_image本身决定
-        # 有第一帧输入的重绘，根据参数redraw_condition_image_with_ipdapter和redraw_condition_image_with_referencenet不使用refer_image和ipadapter_image，
+        # generate vision condition frame start
+        # if condition_images is None, generate with refer_image, ip_adapter_image
+        # if condition_images not None and need redraw, according to redraw_condition_image_with_ipdapter, redraw_condition_image_with_referencenet, refer_image, ip_adapter_image
         if n_vision_condition > 0:
             if condition_images is None and condition_latents is None:
                 logger.debug("run_pipe_text2video, generate first_image")
@@ -538,8 +546,9 @@ class DiffusersPipelinePredictor(object):
         else:
             condition_images = None
             condition_latents = None
-        # 生成首帧 end
-        # refer_image和ip_adapter_image 更新来源2和3, start
+        # generate vision condition frame end
+
+        # refer_image and ip_adapter_image, update mode from 2 and 3 as mentioned above start
         if (
             refer_image is not None
             and redraw_condition_image
@@ -570,9 +579,9 @@ class DiffusersPipelinePredictor(object):
         ):
             ip_adapter_image = condition_images * 255.0
             logger.debug(f"update ip_adapter_image because of generate first_image")
-            # refer_image和ip_adapter_image 更新来源2和3, end
+        # refer_image and ip_adapter_image, update mode from 2 and 3 as mentioned above end
 
-        # face image
+        # refer_face_image, update mode from 2 and 3 as mentioned above start
         if (
             refer_face_image is not None
             and redraw_condition_image
@@ -587,7 +596,7 @@ class DiffusersPipelinePredictor(object):
         ):
             refer_face_image = condition_images * 255.0
             logger.debug(f"update face_image because of generate first_image")
-            # refer_image和refer_face_image 更新来源2和3, end
+            # refer_face_image, update mode from 2 and 3 as mentioned above end
 
         last_mid_video_noises = None
         last_mid_video_latents = None
@@ -603,7 +612,6 @@ class DiffusersPipelinePredictor(object):
                 result_overlap = 0
             else:
                 if n_vision_condition > 0:
-                    # pipeline 在有 condition_latents 和 condition_images 时， 会忽略 condition_images
                     # ignore condition_images if condition_latents is not None in pipeline
                     if not fix_condition_images:
                         logger.debug(f"{i_batch}, update condition_latents")
@@ -888,7 +896,7 @@ class DiffusersPipelinePredictor(object):
             logger.debug(f"\n sd_pipeline_predictor, run_pipe_video2video: {i_batch}")
             if max_batch_num is not None and i_batch == max_batch_num:
                 break
-            # 视频读取、预处理
+            # read and prepare video batch
             batch = item.data
             batch = batch_dynamic_crop_resize_images(
                 batch,
@@ -898,7 +906,7 @@ class DiffusersPipelinePredictor(object):
 
             batch = batch[np.newaxis, ...]
             batch_size, channel, video_length, video_height, video_width = batch.shape
-            # 提取 controlnet middle
+            # extract controlnet middle
             if self.pipeline.controlnet is not None:
                 batch = rearrange(batch, "b c t h w-> (b t) h w c")
                 controlnet_processor_params = update_controlnet_processor_params(

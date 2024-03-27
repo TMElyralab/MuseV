@@ -419,8 +419,13 @@ python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --
 - `unet_model_cfg_path`: motion unet model config path or model path。
 - `unet_model_name`: unet model name, use to get model path in `unet_model_cfg_path`, and init unet class instance in `musev/models/unet_loader.py`. multi model names with sep=`,`, or `all`. If `unet_model_cfg_path` is model path, `unet_name` must be supported in `musev/models/unet_loader.py`
 - `time_size`: num_frames per diffusion denoise generation。default=`12`.
-- `n_batch`: generation numbers. Total_frames=n_batch*time_size+n_viscond, default=`1`。
+- `n_batch`: generation numbers of shot, $total\_frames=n\_batch * time\_size + n\_viscond$, default=`1`。
 - `context_frames`: context_frames num. If `time_size` > `context_frame`，`time_size` window is split into many sub-windows for parallel denoising"。 default=`12`。
+
+To generate long video, there two ways, 
+1. `visual conditioned parallel denoise`: set `n_batch=1`, `time_size` = all frames you want.
+1. `traditional end-to-end`: set `time_size` = `context_frames` = frames of a shot (`12`), `context_overlap` = 0；
+
 
 **model parameters**：
 support `referencenet`, `IPAdapter`, `IPAdapterFaceID`, `Facein`.
@@ -458,6 +463,7 @@ all controlnet_names refer to [mmcm](https://github.com/TMElyralab/MMCM/blob/mai
 
 ### musev_referencenet_pose
 only used for `pose2video`
+Based on `musev_referencenet`, fix `referencenet`, `pose-controlnet`, and `T2I`, train `motion` module and `IPAdapter`.
 ```bash
 python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  wave_hand   --fps 12 --time_size 12
 ```
@@ -473,7 +479,6 @@ python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --
 python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  wave_hand   --fps 12 --time_size 12
 ```
 
-
 ### Gradio demo
 MuseV provides gradio script to generate GUI in local machine to generate video conveniently. 
 
@@ -482,15 +487,24 @@ cd scripts/gradio
 python app.py
 ```
 
+
 # Acknowledgements
 
-1. MuseV builds on [TuneAVideo](https://github.com/showlab/Tune-A-Video), [diffusers](https://github.com/huggingface/diffusers), [Moore-AnimateAnyone](https://github.com/MooreThreads/Moore-AnimateAnyone/tree/master/src/pipelines), [animatediff](https://github.com/guoyww/AnimateDiff). 
+1. MuseV builds on [TuneAVideo](https://github.com/showlab/Tune-A-Video), [diffusers](https://github.com/huggingface/diffusers), [Moore-AnimateAnyone](https://github.com/MooreThreads/Moore-AnimateAnyone/tree/master/src/pipelines), [animatediff](https://github.com/guoyww/AnimateDiff), [IP-Adapter](https://github.com/tencent-ailab/IP-Adapter), [AnimateAnyone](https://arxiv.org/abs/2311.17117), [VideoFusion](https://arxiv.org/abs/2303.08320). 
 2. MuseV builds on dataset `ucf101`, `webvid`.
 
 Thanks  for open-sourcing!
 
-<!-- # Contribution 暂时不需要组织开源共建 -->
+# Limitation
+There are still many limitations, including
 
+1. limited types of video generation and limited action amplitude, because of limited types of  training data. Models MuseV released are trained on approximately 60K human text-video pairs with resolution `512*320`. `MuseV` has greater action amplitude but low video quality at low resolution, has less action amplitude but high videoquality. Train on larger, higher resolution, higher quality text-video dataset makes musev better.
+1. watermark becaused of `webvid`. A cleaner dataset withour watermark improve this issue Significantly.
+1. limited types of long video generation. Visual Conditioned parallel denoise could solving accumulated error of long video, but current method is only suitable repetitive video tyle without obvious cycle, like smile, blink, wave, etc.
+1. undertrained referencenet and IP-Adapter, beacause of urgent time, limited resources, and other issues.
+1. incomplete structured code. MuseV supports rich and dynamic features, but complex and unrefacted code. It takes time to familiarize. 
+
+<!-- # Contribution 暂时不需要组织开源共建 -->
 # Citation
 **paper comming soon**
 ```bib

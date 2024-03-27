@@ -142,8 +142,8 @@ class MusevControlNetPipeline(
     DiffusersStableDiffusionControlNetImg2ImgPipeline, TextualInversionLoaderMixin
 ):
     """
-    Integrated pipeline, support
-    1. use text2image model only, or text2video model, with skip_temporal_layer
+    a union diffusers pipeline, support
+    1. text2image model only, or text2video model, by setting skip_temporal_layer
     2. text2video, image2video, video2video;
     3. multi controlnet
     4. IPAdapter
@@ -923,10 +923,11 @@ class MusevControlNetPipeline(
                 refer_self_attn_emb,
             ) = self.referencenet(**referencenet_params)
 
-            # 方法1，
-            # 对 referencenet 的输入 concat zero
+            # many ways to prepare negative referencenet emb
+            # mode 1
+            # zero shape like ref_image
             # if do_classifier_free_guidance:
-            #     # 方法2，
+            #     # mode 2:
             #     # if down_block_refer_embs is not None:
             #     #     down_block_refer_embs = [
             #     #         torch.cat([x] * 2) for x in down_block_refer_embs
@@ -938,7 +939,7 @@ class MusevControlNetPipeline(
             #     #         torch.cat([x] * 2) for x in refer_self_attn_emb
             #     #     ]
 
-            #     #  方法3
+            #     #  mode 3
             #     if down_block_refer_embs is not None:
             #         down_block_refer_embs = [
             #             torch.cat([torch.zeros_like(x), x])
@@ -990,8 +991,7 @@ class MusevControlNetPipeline(
             if isinstance(condition_latents, np.ndarray):
                 condition_latents = torch.from_numpy(condition_latents)
             condition_latents = condition_latents.to(dtype=dtype, device=device)
-            # 如果condition为空，默认时序靠前；要生成的靠后
-
+            # if condition is None, mean condition_latents head, generated video is tail
             if vision_condition_latent_index is not None:
                 # vision_condition_latent_index should be list, whose length is condition_latents.shape[2]
                 # -1 -> will be converted to condition_latents.shape[2]+video_length
@@ -1129,7 +1129,6 @@ class MusevControlNetPipeline(
                         f"call, controlnet_latents.shape, f{controlnet_latents.shape}"
                     )
             else:
-                # TODO：使用index进行concat
                 # TODO: concat with index
                 if isinstance(control_image, np.ndarray):
                     control_image = torch.from_numpy(control_image)
@@ -1158,7 +1157,6 @@ class MusevControlNetPipeline(
 
         elif isinstance(controlnet, MultiControlNetModel):
             control_images = []
-            # TODO: 支持直接使用 controlnet_latent 而不是 frames
             # TODO: directly support contronet_latent instead of frames
             if (
                 controlnet_latents is not None

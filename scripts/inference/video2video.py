@@ -158,7 +158,7 @@ def parse_args():
         "--facein_model_name",
         type=str,
         default=None,
-        help="facein model name, None means do not use facein, default=`None`",
+        help="facein model name,  None means do not use facein, now unsupported default=`None`",
     )
     parser.add_argument(
         "--ip_adapter_face_model_cfg_path",
@@ -258,13 +258,13 @@ def parse_args():
         "--height",
         type=int,
         default=None,
-        help="Height of the generated video, 如果没有设置会默认使用condition_image或视频尺寸, default=`None`",
+        help="Height of the generated video, if none then use height of condition_image, if all none raise error, default=`None`",
     )
     parser.add_argument(
         "--width",
         type=int,
         default=None,
-        help="Width of the generated video, 如果没有设置会默认使用原视频尺寸，default=`None`",
+        help="Width of the generated video, if none then use height of condition_image, if all none raise error, default=`None`",
     )
     parser.add_argument(
         "--img_length_ratio",
@@ -302,7 +302,7 @@ def parse_args():
         "--video_guidance_scale",
         type=float,
         default=3.5,
-        help="video_guidance_scale of video, 改大运动变化增强、畸形、变色风险增大， default=`3.5`",
+        help="video_guidance_scale of video, the greater the value, the greater the video change, the more likely video error, default=`3.5`",
     )
     parser.add_argument(
         "--video_guidance_scale_end",
@@ -339,7 +339,7 @@ def parse_args():
         "--video_strength",
         type=float,
         default=1.0,
-        help="Strength of the redrawn video, , 当video2video时，建议设置大点, default=`1.0`",
+        help="Strength of the redrawn video, default=`1.0`",
     )
     parser.add_argument(
         "--negprompt_cfg_path",
@@ -411,56 +411,60 @@ def parse_args():
         default="video",
         type=str,
         choices=["video", "video_middle"],
-        help="用什么驱动生成视频，默认video2video，video影响噪声,当选择 video_middle 时，表示video只是用于提取middle，不参与噪声, default=`video`",
+        help=(
+            "which part to guide video generateion"
+            "video_middle, only controlnet condition, or called videio middle, like pose, depth"
+            "video2video, more than video middle, use video guide noise like img2img pipeline, default=`video`"
+        ),
     ),
     parser.add_argument(
         "--end_to_end",
         default=True,
         action="store_false",
-        help="是否首尾相连的方式生成长视频, default=`True`",
+        help="whether end2end to generate long video, default=`True`",
     ),
     parser.add_argument(
         "--fixed_refer_image",
         action="store_false",
         default=True,
-        help="whether fix referencenet image or not,默认使用第一帧作为参考帧， default=`True`",
+        help="whether fix referencenet image or not, if none and referencenet is not None, use vision condition frame, default=`True`",
     )
     parser.add_argument(
         "--fixed_ip_adapter_image",
         action="store_false",
         default=True,
-        help="whether fixed_ip_adapter_image or not ,默认使用第一帧作为参考帧， default=`True`",
+        help="whether fixed_ip_adapter_image or not , if none and ipadapter is not None, use vision condition frame, default=`True`",
     )
     parser.add_argument(
         "--fixed_refer_face_image",
         action="store_false",
         default=True,
-        help="whether fix facein image or not,默认使用第一帧作为参考帧， default=`True`",
+        help="whether fix facein image or not, if not and ipadapterfaceid is not None, use vision condition frame, default=`True`",
     )
     parser.add_argument(
         "--redraw_condition_image_with_referencenet",
         action="store_false",
         default=True,
-        help="重绘首帧的时候是否使用ip_adapter， default=`True`",
+        help="whether use ip_adapter when redrawing vision condition image default=`True`",
     )
     parser.add_argument(
         "--redraw_condition_image_with_ipdapter",
         action="store_false",
         default=True,
-        help="重绘首帧的时候是否使用ip_adapter， default=`True`",
+        help="whether use ip_adapter when redrawing vision condition image default=`True`",
     )
     parser.add_argument(
         "--need_video2video",
         action="store_true",
         default=False,
-        help="video2video时是否使用原视频垫图，video2video默认True，videomiddle2video、按需使用， default=`False`",
+        help="whether use video guide initial noise, default=`False`",
     )
 
     parser.add_argument(
         "--redraw_condition_image_with_facein",
         action="store_false",
         default=True,
-        help="重绘首帧的时候是否使用 facein, default=`True`",
+        help="whether use face tool when redrawing vision condition image, default=`True`",
     )
     parser.add_argument(
         "--w_ind_noise",
@@ -472,13 +476,13 @@ def parse_args():
         "--ip_adapter_scale",
         default=1.0,
         type=float,
-        help="ipadapter权重， default=`1.0`",
+        help="ipadapter weight， default=`1.0`",
     )
     parser.add_argument(
         "--facein_scale",
         default=1.0,
         type=float,
-        help="facein 权重， default=`1.0`",
+        help="facein weight， default=`1.0`",
     )
     parser.add_argument(
         "--face_image_path",
@@ -508,7 +512,7 @@ def parse_args():
         "--redraw_condition_image_with_ip_adapter_face",
         action="store_false",
         default=True,
-        help="重绘首帧的时候是否使用 facein, default=`True`",
+        help="whether use facein when redrawing vision condition image, default=`True`",
     )
     parser.add_argument(
         "--ip_adapter_face_scale",
@@ -520,107 +524,108 @@ def parse_args():
         "--prompt_only_use_image_prompt",
         action="store_true",
         default=False,
-        help="prompt_only_use_image_prompt, 在没有ip_adapter_cross_attn时会替换掉text_prompt_emb, default=`False`",
+        help="prompt_only_use_image_prompt, if true, replace text_prompt_emb with image_prompt_emb in ip_adapter_cross_attn, default=`False`",
     )
-
+    # moore animateanyone start
     parser.add_argument(
         "--pose_guider_model_path",
         type=str,
         default=None,
-        help="moore pose_guider，等价于controlnet的功能, default=`None`",
+        help="moore pose_guider, refer to MooreAnimateAnyone, similar to controlnet, default=`None`",
     )
     parser.add_argument(
         "--enable_zero_snr",
         action="store_true",
         default=False,
-        help="是否使用 zero_snr的scheduler的参数，包括v_prediction、trailing等, default=`False`",
+        help="whether use zero_snr in scheduler, include v_prediction、trailing, etc , default=`False`",
     )
+    # moore animateanyone end
 
     parser.add_argument(
         "--record_mid_video_noises",
         action="store_true",
         default=False,
-        help="是否在去噪过程中，使用前一片段的后几帧噪声影响后一片段的前几帧噪声, default=`False`",
+        help="whether record middle timestep noise of the last frames of last shot, default=`False`",
     )
     parser.add_argument(
         "--record_mid_video_latents",
         action="store_true",
         default=False,
-        help="是否在去噪过程中，使用前一片段的后几帧latents影响后一片段的前几帧latents, default=`False`",
+        help="whether record middle timestep latent of the last frames of last shot, default=`False`",
     )
     parser.add_argument(
         "--video_overlap",
         default=1,
         type=int,
-        help="串行去噪过程，前一片段和后一片段的重合帧数，default=`1`",
+        help="overlap when generate long video with end2end method, default=`1`",
     )
     parser.add_argument(
         "--context_schedule",
         default="uniform_v2",
         type=str,
-        help="并行去噪的片段生成方式，default=`uniform_v2`",
+        help="how to generate multi shot index when parallel denoise, default=`uniform_v2`",
         choices=["uniform", "uniform_v2"],
     )
     parser.add_argument(
         "--context_frames",
         default=12,
         type=int,
-        help="并行去噪过程中Unet一次运算的窗口大小，default=`12`",
+        help="window size of a subshot in parallel denoise, default=`12`",
     )
     parser.add_argument(
         "--context_stride",
         default=1,
         type=int,
-        help="并行去噪过程中Unet一次运算的窗口步进，貌似是无效参数，待去掉，default=`1`",
+        help="window stride of a subshot in parallel denoise, unvalid paramter, to delete, default=`1`",
     )
     parser.add_argument(
         "--context_overlap",
         default=4,
         type=int,
-        help="并行去噪过程中Unet一次运算的窗口重合部分，default=`4`",
+        help="window overlap of a subshot in parallel denoise,default=`4`",
     )
     parser.add_argument(
         "--context_batch_size",
         default=1,
         type=int,
-        help="并行去噪过程中Unet一次运行的窗口数量，增加batch_size，会显著增加显存，default=`1`",
+        help="num of subshot in parallel denoise, change in batch_size, need more gpu memory, default=`1`",
     )
     parser.add_argument(
         "--interpolation_factor",
         default=1,
         type=int,
-        help="对最后生成的latent进行超分辨，default=`1`",
+        help="whether do super resolution to latents, `1` means do nothing, default=`1`",
     )
     parser.add_argument(
         "--video_is_middle",
         action="store_true",
         default=False,
-        help="输入视频是否是middle可视化视频, default=`False`",
+        help="input video_path is natural rgb video or not, False means pose default=`False`",
     )
     parser.add_argument(
         "--video_has_condition",
         action="store_false",
         default=True,
-        help="当输入的视频是middle condition时，且有首帧时，middle序列是否含有首帧, default=`True`",
+        help="if video_is_middle true,  whether condition of vision condition image is same as of first frame of video_path or not,  default=`True`",
     )
     parser.add_argument(
         "--need_return_videos",
         action="store_true",
         default=False,
-        help="保存视频时是否保存原视频, default=`False`",
+        help="whether save video_path with generated video together, default=`False`",
     )
     parser.add_argument(
         "--need_return_condition",
         action="store_true",
         default=False,
-        help="保存视频时是否保存controlnet_middle, default=`False`",
+        help="whether save controlnet_middle with generated video together, default=`False`",
     )
 
     parser.add_argument(
         "--n_repeat",
         default=1,
         type=int,
-        help="每个测试数据跑几遍，default=`1`",
+        help="repeat times for every task, default=`1`",
     )
     args = parser.parse_args()
     return args
@@ -777,7 +782,7 @@ suffix_prompt = ", beautiful, masterpiece, best quality"
 suffix_prompt = ""
 
 if sd_model_name != "None":
-    # 使用 cfg_path 里的sd_model_path
+    # use sd_model_path in sd_model_cfg_path
     sd_model_params_dict_src = load_pyhon_obj(sd_model_cfg_path, "MODEL_CFG")
     sd_model_params_dict = {
         k: v
@@ -785,7 +790,8 @@ if sd_model_name != "None":
         if sd_model_name == "all" or k in sd_model_name
     }
 else:
-    # 使用命令行给的sd_model_path, 需要单独设置 sd_model_name 为None，
+    # get sd_model_path in sd_model_cfg_path by sd_model_name
+    # if set path of sd_model_path in cmd, should set sd_model_name as None，
     sd_model_name = os.path.basename(sd_model_cfg_path).split(".")[0]
     sd_model_params_dict = {sd_model_name: {"sd": sd_model_cfg_path}}
     sd_model_params_dict_src = sd_model_params_dict
@@ -798,7 +804,7 @@ if len(sd_model_params_dict) == 0:
 print("running model, T2I SD")
 pprint(sd_model_params_dict)
 
-# lcm
+# lcm parameters
 if lcm_model_name is not None:
     lcm_model_params_dict_src = load_pyhon_obj(lcm_model_cfg_path, "MODEL_CFG")
     print("lcm_model_params_dict_src")
@@ -820,7 +826,7 @@ else:
 print("unet: ", unet_model_name, unet_model_path)
 
 
-# referencenet
+# referencenet parameters
 if referencenet_model_name is not None:
     if os.path.isdir(referencenet_model_cfg_path):
         referencenet_model_path = referencenet_model_cfg_path
@@ -842,7 +848,7 @@ else:
 print("referencenet: ", referencenet_model_name, referencenet_model_path)
 
 
-# ip_adapter
+# ip_adapter parameters
 if ip_adapter_model_name is not None:
     ip_adapter_model_params_dict_src = load_pyhon_obj(
         ip_adapter_model_cfg_path, "MODEL_CFG"
@@ -856,8 +862,9 @@ else:
 print("ip_adapter: ", ip_adapter_model_name, ip_adapter_model_params_dict)
 
 
-# facein
+# facein parameters
 if facein_model_name is not None:
+    raise NotImplementedError("unsupported facein by now")
     facein_model_params_dict_src = load_pyhon_obj(facein_model_cfg_path, "MODEL_CFG")
     print("facein_model_params_dict_src", facein_model_params_dict_src.keys())
     facein_model_params_dict = facein_model_params_dict_src[facein_model_name]
@@ -905,7 +912,6 @@ negative_prompt_name, negative_prompt = get_negative_prompt(
     cfg_path=negprompt_cfg_path,
     n=negtive_prompt_length,
 )
-
 print("video_negprompt", video_negative_prompt_name, video_negative_prompt)
 print("negprompt", negative_prompt_name, negative_prompt)
 
@@ -969,6 +975,7 @@ def read_image_and_name(path):
     return images, name
 
 
+# load referencenet
 if referencenet_model_name is not None:
     referencenet = load_referencenet_by_name(
         model_name=referencenet_model_name,
@@ -981,6 +988,7 @@ else:
     referencenet = None
     referencenet_model_name = "no"
 
+# load vision_clip_extractor
 if vision_clip_extractor_class_name is not None:
     vision_clip_extractor = load_vision_clip_encoder_by_name(
         ip_image_encoder=vision_clip_model_path,
@@ -993,6 +1001,7 @@ else:
     vision_clip_extractor = None
     logger.info(f"vision_clip_extractor, None")
 
+# load ip_adapter_model
 if ip_adapter_model_name is not None:
     ip_adapter_image_proj = load_ip_adapter_image_proj_by_name(
         model_name=ip_adapter_model_name,
@@ -1028,7 +1037,7 @@ for model_name, sd_model_params in sd_model_params_dict.items():
     model_style = sd_model_params.get("style", None)
     sd_model_path = sd_model_params["sd"]
     test_model_vae_model_path = sd_model_params.get("vae", vae_model_path)
-
+    # load unet according test_data
     unet = load_unet_by_name(
         model_name=unet_model_name,
         sd_unet_model=unet_model_path,
@@ -1036,11 +1045,12 @@ for model_name, sd_model_params in sd_model_params_dict.items():
         # sd_model="./checkpoints/Moore-AnimateAnyone/AnimateAnyone/denoising_unet.pth",
         cross_attention_dim=cross_attention_dim,
         need_t2i_facein=facein_model_name is not None,
-        # facein 目前没参与训练，但在unet中定义了，载入相关参数会报错，所以用strict控制
-        strict=not (facein_model_name is not None),
+        # ip_adapter_face_model_name not train in unet, need load individually
+        strict=not (ip_adapter_face_model_name is not None),
         need_t2i_ip_adapter_face=ip_adapter_face_model_name is not None,
     )
 
+    # load facein according test_data
     if facein_model_name is not None:
         (
             face_emb_extractor,
@@ -1056,13 +1066,13 @@ for model_name, sd_model_params in sd_model_params_dict.items():
             ],
             ip_scale=facein_model_params_dict["ip_scale"],
             device=device,
-            # facein目前没有参与unet中的训练，需要单独载入参数
             unet=unet,
         )
     else:
         face_emb_extractor = None
         facein_image_proj = None
 
+    # load ipadapter_face model according test_data
     if ip_adapter_face_model_name is not None:
         (
             ip_adapter_face_emb_extractor,
@@ -1080,7 +1090,7 @@ for model_name, sd_model_params in sd_model_params_dict.items():
             ],
             ip_scale=ip_adapter_face_model_params_dict["ip_scale"],
             device=device,
-            unet=unet,  # ip_adapter_face 目前没有参与unet中的训练，需要单独载入参数
+            unet=unet,
         )
     else:
         ip_adapter_face_emb_extractor = None
@@ -1088,6 +1098,7 @@ for model_name, sd_model_params in sd_model_params_dict.items():
 
     print("test_model_vae_model_path", test_model_vae_model_path)
 
+    # init sd_predictor
     sd_predictor = DiffusersPipelinePredictor(
         sd_model_path=sd_model_path,
         unet=unet,
@@ -1106,10 +1117,6 @@ for model_name, sd_model_params in sd_model_params_dict.items():
         ip_adapter_face_image_proj=ip_adapter_face_image_proj,
         pose_guider=pose_guider,
         controlnet_name=controlnet_name,
-        # TODO: 一些过期参数，待去掉
-        include_body=True,
-        include_face=False,
-        include_hand=True,
         enable_zero_snr=args.enable_zero_snr,
     )
     logger.debug(f"load referencenet"),
@@ -1172,7 +1179,7 @@ for model_name, sd_model_params in sd_model_params_dict.items():
             condition_image_width = None
             logger.debug(f"test_data_condition_images is None")
 
-        # 当没有指定生成视频的宽高时，使用输入条件的宽高，优先使用 condition_image，低优使用 video
+        # if test_data_height is not assigned, use height of condition, if still None, use of video
         if test_data_height is None:
             test_data_height = (
                 condition_image_height
@@ -1190,6 +1197,8 @@ for model_name, sd_model_params in sd_model_params_dict.items():
         test_data_img_length_ratio = float(
             test_data.get("img_length_ratio", img_length_ratio)
         )
+
+        # to align height of generated video with video2video, use `64`` as basic pixel unit instead of `8``
         test_data_height = int(test_data_height * test_data_img_length_ratio // 64 * 64)
         test_data_width = int(test_data_width * test_data_img_length_ratio // 64 * 64)
         pprint(test_data)
@@ -1198,7 +1207,7 @@ for model_name, sd_model_params in sd_model_params_dict.items():
         # continue
         test_data_style = test_data.get("style", None)
         test_data_sex = test_data.get("sex", None)
-        # 如果使用|进行多参数任务设置时对应的字段是字符串类型，需要显式转换浮点数。
+        # if paramters in test_data is str, but float in fact, convert it into float,int.
         test_data_motion_speed = float(test_data.get("motion_speed", motion_speed))
         test_data_w_ind_noise = float(test_data.get("w_ind_noise", w_ind_noise))
         test_data_img_weight = float(test_data.get("img_weight", img_weight))
@@ -1267,7 +1276,7 @@ for model_name, sd_model_params in sd_model_params_dict.items():
                 :negtive_prompt_length
             ]
 
-        # 准备 test_data_refer_image
+        # prepare test_data_refer_image
         if referencenet is not None:
             if test_data_refer_image_path is None:
                 test_data_refer_image = test_data_condition_images
@@ -1283,7 +1292,7 @@ for model_name, sd_model_params in sd_model_params_dict.items():
             test_data_refer_image_name = "no"
             logger.debug(f"test_data_refer_image is None")
 
-        # 准备 test_data_ipadapter_image
+        # prepare test_data_ipadapter_image
         if vision_clip_extractor is not None:
             if test_data_ipadapter_image_path is None:
                 test_data_ipadapter_image = test_data_condition_images
@@ -1305,7 +1314,8 @@ for model_name, sd_model_params in sd_model_params_dict.items():
             test_data_ipadapter_image_name = "no"
             logger.debug(f"test_data_ipadapter_image is None")
 
-        # 准备 test_data_refer_face_image
+        # prepare test_data_refer_face_image
+
         if facein_image_proj is not None or ip_adapter_face_image_proj is not None:
             if test_data_refer_face_image_path is None:
                 test_data_refer_face_image = test_data_condition_images
@@ -1327,7 +1337,9 @@ for model_name, sd_model_params in sd_model_params_dict.items():
             test_data_refer_face_image_name = "no"
             logger.debug(f"test_data_refer_face_image is None")
 
-        # 当模型的sex、style与test_data同时存在且不相等时，就跳过这个测试用例
+        # if sex, style of test_data is not aligned with of model
+        # skip this test_data
+
         if (
             model_sex is not None
             and test_data_sex is not None
