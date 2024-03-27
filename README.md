@@ -1,6 +1,6 @@
 # MuseV
 
-<font size=5>MuseV: Infinite-length and High Fidelity Virtual Human Video Generation with Parallel Denoising
+<font size=5>MuseV: Infinite-length and High Fidelity Virtual Human Video Generation with Visual Conditioned  Parallel Denoising
 </br>
 Zhiqiang Xia <sup>\*</sup>,
 Zhaokang Chen<sup>\*</sup>,
@@ -495,7 +495,7 @@ Thanks  for open-sourcing!
 **paper comming soon**
 ```bib
 @article{musev,
-  title={MuseV: Infinite-length and High Fidelity Virtual Human Video Generation with Parallel Denoising},
+  title={MuseV: Infinite-length and High Fidelity Virtual Human Video Generation with Visual Conditioned Parallel Denoising},
   author={Xia, Zhiqiang and Chen, Zhaokang and Wu, Bin and Li, Chao and Hung, Kwok-Wai and Zhan, Chao and Zhou, Wenjiang},
   journal={arxiv},
   year={2024}
