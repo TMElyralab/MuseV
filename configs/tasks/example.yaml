@@ -171,14 +171,25 @@
   width: 736
 
 # video2video
-- name: "wave_hand"
+- name: "dacne1"
   prompt: "(best quality), ((masterpiece)), (highres), illustration, original, extremely detailed wallpaper"
-  video_path:  ./data/source_video/wave_hand_poseseq.mp4
-  condition_images: null
+  video_path:  ./data/source_video/video1_girl_poseseq.mp4 
+  condition_images: ./data/images/spark_girl.png
   refer_image: ${.condition_images}
   ipadapter_image: ${.condition_images}
-  height: 1080
-  width: 1080
+  height: 960
+  width: 512
+  img_length_ratio: 1.0
+  video_is_middle: True # if true, means video_path is controlnet condition, not natural rgb video
+
+- name: "dacne2"
+  prompt: "(best quality), ((masterpiece)), (highres), illustration, original, extremely detailed wallpaper"
+  video_path:  ./data/source_video/video1_girl_poseseq.mp4 
+  condition_images: ./data/images/cyber_girl.png
+  refer_image: ${.condition_images}
+  ipadapter_image: ${.condition_images}
+  height: 960
+  width: 512
   img_length_ratio: 1.0
   video_is_middle: True # if true, means video_path is controlnet condition, not natural rgb video
 
