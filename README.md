@@ -302,7 +302,7 @@ In `duffy` case, pose of the vision condition frame is not aligned with of the f
 
   <tr>
     <td>
-       talking
+       talk
     </td>
     <td>
       <video src="" width="100" controls preload></video>
