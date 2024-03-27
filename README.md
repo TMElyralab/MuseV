@@ -12,14 +12,14 @@ Wenjiang Zhou
 (<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author)
 </font>
 
-**[project](comming soon)**  **Technical report (comming soon)**
+**[Project](comming soon)**  **Technical report (comming soon)**
 
 
 We have setup **the world simulator vision since March 2023, believing diffusion models can simulate the world**. `MuseV` was a milestone achieved around **July 2023**. Amazed by the progress of Sora, we decided to opensource `MuseV`, hopefully it will benefit the community. Next we will move on to the promising diffusion+transformer scheme.
 
 We will soon release `MuseTalk`, a real-time high quality lip sync model, which can be applied with MuseV as a complete virtual human generation solution. Please stay tuned! 
 
-# Intro
+# Overview
 `MuseV` is a diffusion-based virtual human video generation framework, which 
 1. supports **infinite length** generation using a novel **Parallel Denoising scheme**.
 2. checkpoint available for virtual human video generation trained on human dataset.
@@ -30,9 +30,9 @@ We will soon release `MuseTalk`, a real-time high quality lip sync model, which 
 
 
 ## Model
-### overview of model structure
+### Overview of model structure
 ![model_structure](./data/models/musev_structure.png)
-### parallel denoise
+### Parallel denoise
 ![parallel_denoise](./data//models/parallel_denoise.png)
 
 ## Cases
@@ -206,7 +206,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
   </tr>
 </table >
 
-#### scene
+#### Scene
 
 <table class="center">
     <tr style="font-weight: bolder;text-align:center;">
@@ -331,8 +331,9 @@ prepare python environment and install extra package like `diffusers`, `controln
 
 suggest to use `docker` primarily to prepare python environment.
 
-## prepare environment
-### docker
+## Prepare environment
+
+### Method 1: docker
 1. pull docker image
 ```bash
 docker pull docker pull anchorxia/musev:latest
@@ -343,12 +344,12 @@ docker run --gpus all -it --entrypoint /bin/bash anchorxia/musev:latest
 ```
 The default conda env is `musev`.
 
-### conda 
+### Method 2: conda 
 create conda environment from environment.yaml
 ```
 conda env create --name musev --file ./environment.yml
 ```
-### requirements
+### Method 3: pip requirements
 ```
 pip install -r requirements.txt
 ```
@@ -362,7 +363,9 @@ mim install "mmdet>=3.1.0"
 mim install "mmpose>=1.1.0" 
 ```
 
-### custom package / modified package
+
+### Environment Variables Setting
+#### custom package / modified package
 ```bash
 git clone --recursive https://github.com/TMElyralab/MuseV.git
 ```
@@ -381,7 +384,7 @@ cd MuseV
 1. `controlnet_aux`: modified based on [controlnet_aux](https://github.com/TMElyralab/controlnet_aux)
 
 
-## download models
+## Download models
 ```bash
 git clone https://huggingface.co/TMElyralab/MuseV ./checkpoints
 ```
@@ -401,12 +404,12 @@ git clone https://huggingface.co/TMElyralab/MuseV ./checkpoints
 
 ## Inference
 
-### prepare model_path
-skip this step when run example task with example inference command.
-set model path and abbreviation in config, to use abbreviation in inference script.
+### Prepare model_path
+Skip this step when run example task with example inference command.
+Set model path and abbreviation in config, to use abbreviation in inference script.
 - T2I SD：ref to `musev/configs/model/T2I_all_model.py`
 - Motion Unet: refer to `musev/configs/model/motion_model.py`
-- task: refer to `musev/configs/tasks/example.yaml`
+- Task: refer to `musev/configs/tasks/example.yaml`
 
 ### musev_referencenet
 #### text2video
