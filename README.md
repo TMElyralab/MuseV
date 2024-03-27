@@ -257,6 +257,8 @@ Bellow Case could be found in `configs/tasks/example.yaml`
 ### VideoMiddle2Video
 
 **pose2video**
+In `duffy` case, pose of the vision condition frame is not aligned with of the first frame of control video. `posealign` can solve it.
+
 <table class="center">
     <tr style="font-weight: bolder;text-align:center;">
         <td width="35%">image</td>
@@ -269,7 +271,8 @@ Bellow Case could be found in `configs/tasks/example.yaml`
        None, mean generate first frame with extra text2image module
     </td>
     <td>
-      <video src="" width="100" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/aa0bf370-378d-480f-86e4-d23c4adb7e64
+" width="100" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1)
@@ -281,7 +284,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/duffy.png width="400">
     </td>
     <td>
-      <video src="" width="100" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/c44682e6-aafc-4730-8fc1-72825c1bacf2" width="100" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1)
@@ -290,7 +293,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
 </table >
 
 ### MuseTalk
-**pose2video**
+
 <table class="center">
     <tr style="font-weight: bolder;text-align:center;">
         <td width="35%">name</td>
@@ -310,7 +313,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
        sing
     </td>
     <td>
-      <video src="" width="100" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/951188d1-4731-4e7f-bf40-03cacba17f2f" width="100" controls preload></video>
     </td>
   </tr>
 </table >
