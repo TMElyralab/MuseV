@@ -262,9 +262,9 @@ In `duffy` mode, pose of the vision condition frame is not aligned with the firs
 
 <table class="center">
     <tr style="font-weight: bolder;text-align:center;">
-        <td width="35%">image</td>
-        <td width="50%">video</td>
-        <td width="15%">prompt</td>
+        <td width="25%">image</td>
+        <td width="65%">video</td>
+        <td width="10%">prompt</td>
     </tr>
   <tr>
     <td>
@@ -272,7 +272,7 @@ In `duffy` mode, pose of the vision condition frame is not aligned with the firs
       <img src=./data/images/cyber_girl.png width="200">
     </td>
     <td>
-        <video src="https://github.com/TMElyralab/MuseV/assets/163980830/484cc69d-c316-4464-a55b-3df929780a8e" width="100" controls preload></video>
+        <video src="https://github.com/TMElyralab/MuseV/assets/163980830/484cc69d-c316-4464-a55b-3df929780a8e" width="400" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1)
@@ -283,7 +283,7 @@ In `duffy` mode, pose of the vision condition frame is not aligned with the firs
       <img src=./data/images/duffy.png width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/c44682e6-aafc-4730-8fc1-72825c1bacf2" width="100" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/c44682e6-aafc-4730-8fc1-72825c1bacf2" width="400" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1)
