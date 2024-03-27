@@ -268,19 +268,6 @@ In `duffy` case, pose of the vision condition frame is not aligned with of the f
 
   <tr>
     <td>
-       None, mean generate first frame with extra text2image module
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/aa0bf370-378d-480f-86e4-d23c4adb7e64
-" width="100" controls preload></video>
-    </td>
-    <td>
-      (masterpiece, best quality, highres:1)
-    </td>
-  </tr>
-
-  <tr>
-    <td>
       <img src=./data/images/duffy.png width="400">
     </td>
     <td>
@@ -497,7 +484,7 @@ python app.py
 
 # Acknowledgements
 
-1. MuseV builds on [TuneAVideo](https://github.com/showlab/Tune-A-Video), [diffusers](https://github.com/huggingface/diffusers), [Moore-AnimateAnyone](https://github.com/MooreThreads/Moore-AnimateAnyone/tree/master/src/pipelines). 
+1. MuseV builds on [TuneAVideo](https://github.com/showlab/Tune-A-Video), [diffusers](https://github.com/huggingface/diffusers), [Moore-AnimateAnyone](https://github.com/MooreThreads/Moore-AnimateAnyone/tree/master/src/pipelines), [animatediff](https://github.com/guoyww/AnimateDiff). 
 2. MuseV builds on dataset `ucf101`, `webvid`.
 
 Thanks  for open-sourcing!
