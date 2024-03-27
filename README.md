@@ -8,6 +8,7 @@ Bin Wu<sup>†</sup>,
 Chao Li,
 Kwok-Wai Hung,
 Chao Zhan,
+Yingjie He, 
 Wenjiang Zhou
 (<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author)
 </font>
@@ -510,7 +511,7 @@ There are still many limitations, including
 ```bib
 @article{musev,
   title={MuseV: Infinite-length and High Fidelity Virtual Human Video Generation with Visual Conditioned Parallel Denoising},
-  author={Xia, Zhiqiang and Chen, Zhaokang and Wu, Bin and Li, Chao and Hung, Kwok-Wai and Zhan, Chao and Zhou, Wenjiang},
+  author={Xia, Zhiqiang and Chen, Zhaokang and Wu, Bin and Li, Chao and Hung, Kwok-Wai and Zhan, Chao and He, Yingjie and Zhou, Wenjiang},
   journal={arxiv},
   year={2024}
 }
