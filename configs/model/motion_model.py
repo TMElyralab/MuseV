@@ -9,10 +9,14 @@ MotionDIr = os.path.join(
 MODEL_CFG = {
     "musev": {
         "unet": os.path.join(MotionDIr, "musev"),
-        "desp": "",
+        "desp": "only train unet motion module, fix t2i",
     },
     "musev_referencenet": {
         "unet": os.path.join(MotionDIr, "musev_referencenet"),
-        "desp": "",
+        "desp": "train referencenet, IPAdapter and unet motion module, fix t2i",
+    },
+    "musev_referencenet_pose": {
+        "unet": os.path.join(MotionDIr, "musev_referencenet_pose"),
+        "desp": "train  unet motion module and IPAdapter, fix t2i and referencenet",
     },
 }

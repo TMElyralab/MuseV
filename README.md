@@ -326,12 +326,13 @@ cd MuseV
 ```bash
 git clone https://huggingface.co/TMElyralab/MuseV ./checkpoints
 ```
-- `motion`: text2video model trained on tiny `ucf101` and tiny `webvid` dataset, approximately 60K videos text pairs.
-    - `musev/unet`: only has and train `unet` motion module.
+- `motion`: text2video model, trained on tiny `ucf101` and tiny `webvid` dataset, approximately 60K videos text pairs.
+    - `musev/unet`: only has and train `unet` motion module, need less gpu memory.
     - `musev_referencenet`: train `unet` module, `referencenet`, `IPAdapter`
         - `unet`: `motion` module, which has `to_k`, `to_v` in `Attention` layer refer to `IPAdapter`
         - `referencenet`: similar to `AnimateAnyone`
         - `ip_adapter_image_proj.bin`: images clip emb project layer, refer to `IPAdapter`
+    - `musev_referencenet_pose`: based on `musev_referencenet`, fix `referencenet`and `controlnet_pose`, train `unet motion` and `IPAdapter`
 - `t2i/sd1.5`: text2image model, paramter are frozen when training motion module.
     - majicmixRealv6Fp16: example, could be replaced with other t2i base. download from [majicmixRealv6Fp16](https://civitai.com/models/43331/majicmix-realistic)
 - `IP-Adapter/models`: download from [IPAdapter](https://huggingface.co/h94/IP-Adapter/tree/main)
@@ -388,12 +389,19 @@ python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --un
 
 Most of paramters are same as `musev_text2video`. Special parameters of `video2video` are
 1. need set `video_path` in `test_data`. Now support `rgb video` and `controlnet_middle_video`。
-- `need_video2video`: whether `rgb` video influence initial noise.
+- `which2video`: whether `rgb` video influence initial noise, more than controlnet condition. If True, redraw video.
 - `controlnet_name`：whether use `controlnet condition`, such as `dwpose,depth`.
 - `video_is_middle`: `video_path` is `rgb video` or  `controlnet_middle_video`. could set for every `test_data` in test_data_path.
 - `video_has_condition`: whether condtion_images is aligned with the first frame of video_path. If Not, firstly generate `condition_images` and align with concatation. set in  `test_data`。
 
+### musev_referencenet_pose
+only used for `pose2video`
+```bash
+python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  wavehand   --fps 12 --time_size 12
+```
+
 ### musev
+only has motion module, no referencenet, need less gpu memory.
 #### text2video
 ```bash
 python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --unet_model_name musev   -test_data_path ./configs/tasks/example.yaml  --output_dir ./output  --n_batch 1  --target_datas yongen  --time_size 12 --fps 12

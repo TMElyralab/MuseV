@@ -84,6 +84,7 @@ def load_ip_adapter_image_proj_by_name(
     if model_name in [
         "IPAdapter",
         "musev_referencenet",
+        "musev_referencenet_pose",
     ]:
         ip_adapter_image_proj = ImageProjModel(
             cross_attention_dim=cross_attention_dim,

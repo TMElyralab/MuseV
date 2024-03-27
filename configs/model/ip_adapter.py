@@ -53,4 +53,14 @@ MODEL_CFG = {
         "clip_embeddings_dim": 1024,
         "desp": "",
     },
+    "musev_referencenet_pose": {
+        "ip_image_encoder": os.path.join(IPAdapterModelDir, "image_encoder"),
+        "ip_ckpt": os.path.join(
+            MotionDir, "musev_referencenet_pose/ip_adapter_image_proj.bin"
+        ),
+        "ip_scale": 1.0,
+        "clip_extra_context_tokens": 4,
+        "clip_embeddings_dim": 1024,
+        "desp": "",
+    },
 }
