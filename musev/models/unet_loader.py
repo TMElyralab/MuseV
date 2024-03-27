@@ -242,6 +242,7 @@ def load_unet_by_name(
         )
     elif model_name in [
         "musev_referencenet",
+        "musev_referencenet_pose",
     ]:
         unet = load_unet(
             sd_unet_model=sd_unet_model,
@@ -267,6 +268,6 @@ def load_unet_by_name(
         )
     else:
         raise ValueError(
-            f"unsupport model_name={model_name}, only support musev, musev_referencenet"
+            f"unsupport model_name={model_name}, only support musev, musev_referencenet, musev_referencenet_pose"
         )
     return unet

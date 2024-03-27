@@ -88,7 +88,6 @@ IProgress==0.4
 markupsafe==2.0.1
 xlsxwriter
 cuid
-git+https://github.com/tencent-ailab/IP-Adapter.git
 git+https://github.com/tencent-ailab/IP-Adapter.git@main
 git+https://github.com/openai/CLIP.git
 git+https://github.com/TMElyralab/MMCM.git
