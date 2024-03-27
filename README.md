@@ -15,21 +15,18 @@ Wenjiang Zhou
 **[project](comming soon)**  **Technical report (comming soon)**
 
 
-We have setup the world simulator vision since March 2023, believing diffusion models can simulate the world. `MuseV` was a milestone achieved around July 2023. Amazed by the progress of Sora, we decided to opensource `MuseV`, hopefully it will benefit the community.
+We have setup **the world simulator vision since March 2023, believing diffusion models can simulate the world**. `MuseV` was a milestone achieved around **July 2023**. Amazed by the progress of Sora, we decided to opensource `MuseV`, hopefully it will benefit the community. Next we will move on to the promising diffusion+transformer scheme.
 
-Our next move will switch to the promising diffusion+transformer scheme. Please stay tuned.
-
-We will soon release `MuseTalk`, a real-time lip sync model, which can be applied with MuseV as a complete virtual human generation solution. Please stay tuned!
+We will soon release `MuseTalk`, a real-time high quality lip sync model, which can be applied with MuseV as a complete virtual human generation solution. Please stay tuned! 
 
 # Intro
 `MuseV` is a diffusion-based virtual human video generation framework, which 
-1. supports infinite length generation using a novel Parallel Denoising scheme.
+1. supports **infinite length** generation using a novel **Parallel Denoising scheme**.
 2. checkpoint available for virtual human video generation trained on human dataset.
 3. supports Image2Video, Text2Image2Video, Video2Video.
-4. compatible with the Stable Diffusion ecosystem, including `base_model`, `lora`, `controlnet`, etc. 
+4. compatible with the **Stable Diffusion ecosystem**, including `base_model`, `lora`, `controlnet`, etc. 
 5. supports multi reference image technology, including `IPAdapter`, `ReferenceOnly`, `ReferenceNet`, `IPAdapterFaceID`.
-6. generate video only in **10** timesteps.
-7. training codes (comming very soon).
+6. training codes (comming very soon).
 
 
 ## Model
