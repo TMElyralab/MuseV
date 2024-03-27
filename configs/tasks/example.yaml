@@ -31,16 +31,6 @@
   refer_image: ${.condition_images}
   video_path: null
   width: 564
-- condition_images: ./data/images/real_girl_seaside2.jpeg
-  eye_blinks_factor: 1.8
-  height: 1029
-  img_length_ratio: 0.958
-  ipadapter_image: ${.condition_images}
-  name: real_girl_seaside2
-  prompt: (masterpiece, best quality, highres:1), peaceful beautiful sea scene
-  refer_image: ${.condition_images}
-  video_path: null
-  width: 735
 - condition_images: ./data/images/seaside_girl.jpeg
   eye_blinks_factor: 1.8
   height: 736
@@ -181,22 +171,24 @@
   width: 736
 
 # video2video
-- name: "bilibili_queencard"
+- name: "wave_hand"
   prompt: "(best quality), ((masterpiece)), (highres), illustration, original, extremely detailed wallpaper"
-  video_path:  ./data/bilibili_queencard_s2_8s.mp4
+  video_path:  ./data/source_video/wave_hand_poseseq.mp4
   condition_images: null
   refer_image: ${.condition_images}
   ipadapter_image: ${.condition_images}
-  height: 1280
-  width: 720
+  height: 1080
+  width: 1080
   img_length_ratio: 1.0
+  video_is_middle: True # if true, means video_path is controlnet condition, not natural rgb video
 
-- name: "wavehand"
+- name: "duffy"
   prompt: "(best quality), ((masterpiece)), (highres), illustration, original, extremely detailed wallpaper"
-  video_path: ./data/source_video/bilibili_queencard_s2_8s.mp4
-  condition_images: null
+  video_path: ./data/source_video/pose-for-Duffy-4.mp4
+  condition_images: ./data/images/duffy.png
   refer_image: ${.condition_images}
   ipadapter_image: ${.condition_images}
   height: 1280
-  width: 720
+  width: 704
   img_length_ratio: 1.0
+  video_is_middle: True  # if true, means video_path is controlnet condition, not natural rgb video
