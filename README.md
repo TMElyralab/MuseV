@@ -8,6 +8,7 @@ Bin Wu<sup>†</sup>,
 Chao Li,
 Kwok-Wai Hung,
 Chao Zhan,
+Yingjie He, 
 Wenjiang Zhou
 (<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author)
 </font>
@@ -21,7 +22,7 @@ We will soon release `MuseTalk`, a real-time high quality lip sync model, which 
 
 # Overview
 `MuseV` is a diffusion-based virtual human video generation framework, which 
-1. supports **infinite length** generation using a novel **Parallel Denoising scheme**.
+1. supports **infinite length** generation using a novel **Visual Conditioned Parallel Denoising scheme**.
 2. checkpoint available for virtual human video generation trained on human dataset.
 3. supports Image2Video, Text2Image2Video, Video2Video.
 4. compatible with the **Stable Diffusion ecosystem**, including `base_model`, `lora`, `controlnet`, etc. 
@@ -35,13 +36,13 @@ We will soon release `MuseTalk`, a real-time high quality lip sync model, which 
 ## Model
 ### Overview of model structure
 ![model_structure](./data/models/musev_structure.png)
-### Parallel denoise
+### Parallel denoising
 ![parallel_denoise](./data//models/parallel_denoise.png)
 
 ## Cases
-All frames are generated from text2video model, without any post process.
+All frames were generated directly from text2video model, without any post process.
 <!-- # TODO: // use youtu video link? -->
-Bellow Case could be found in `configs/tasks/example.yaml`
+Examples bellow can be accessed at `configs/tasks/example.yaml`
 ### Text/Image2Video
 
 #### Human
@@ -257,21 +258,32 @@ Bellow Case could be found in `configs/tasks/example.yaml`
 ### VideoMiddle2Video
 
 **pose2video**
-In `duffy` case, pose of the vision condition frame is not aligned with of the first frame of control video. `posealign` can solve it.
+In `duffy` mode, pose of the vision condition frame is not aligned with the first frame of control video. `posealign` will solve the problem.
 
 <table class="center">
     <tr style="font-weight: bolder;text-align:center;">
-        <td width="35%">image</td>
-        <td width="50%">video</td>
-        <td width="15%">prompt</td>
+        <td width="25%">image</td>
+        <td width="65%">video</td>
+        <td width="10%">prompt</td>
     </tr>
-
   <tr>
+    <td>
+      <img src=./data/images/spark_girl.png width="200">
+      <img src=./data/images/cyber_girl.png width="200">
+    </td>
+    <td>
+        <video src="https://github.com/TMElyralab/MuseV/assets/163980830/484cc69d-c316-4464-a55b-3df929780a8e" width="400" controls preload></video>
+    </td>
+    <td>
+      (masterpiece, best quality, highres:1)
+    </td>
+  </tr>
+  <tr>   
     <td>
       <img src=./data/images/duffy.png width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/c44682e6-aafc-4730-8fc1-72825c1bacf2" width="100" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/c44682e6-aafc-4730-8fc1-72825c1bacf2" width="400" controls preload></video>
     </td>
     <td>
       (masterpiece, best quality, highres:1)
@@ -322,9 +334,9 @@ In `duffy` case, pose of the vision condition frame is not aligned with of the f
 - [ ] release `posealign` module
 
 # Quickstart
-prepare python environment and install extra package like `diffusers`, `controlnet_aux`, `mmcm`.
+Prepare python environment and install extra package like `diffusers`, `controlnet_aux`, `mmcm`.
 
-suggest to use `docker` primarily to prepare python environment.
+You are recommended to use `docker` primarily to prepare python environment.
 
 ## Prepare environment
 
@@ -419,37 +431,42 @@ python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --
 - `unet_model_cfg_path`: motion unet model config path or model path。
 - `unet_model_name`: unet model name, use to get model path in `unet_model_cfg_path`, and init unet class instance in `musev/models/unet_loader.py`. multi model names with sep=`,`, or `all`. If `unet_model_cfg_path` is model path, `unet_name` must be supported in `musev/models/unet_loader.py`
 - `time_size`: num_frames per diffusion denoise generation。default=`12`.
-- `n_batch`: generation numbers. Total_frames=n_batch*time_size+n_viscond, default=`1`。
+- `n_batch`: generation numbers of shot, $total\_frames=n\_batch * time\_size + n\_viscond$, default=`1`。
 - `context_frames`: context_frames num. If `time_size` > `context_frame`，`time_size` window is split into many sub-windows for parallel denoising"。 default=`12`。
 
+To generate long videos, there two ways:
+1. `visual conditioned parallel denoise`: set `n_batch=1`, `time_size` = all frames you want.
+1. `traditional end-to-end`: set `time_size` = `context_frames` = frames of a shot (`12`), `context_overlap` = 0；
+
+
 **model parameters**：
-support `referencenet`, `IPAdapter`, `IPAdapterFaceID`, `Facein`.
+supports `referencenet`, `IPAdapter`, `IPAdapterFaceID`, `Facein`.
 - referencenet_model_name: `referencenet` model name.
 - ImageClipVisionFeatureExtractor: `ImageEmbExtractor` name, extractor vision clip emb used in `IPAdapter`.
 - vision_clip_model_path: `ImageClipVisionFeatureExtractor` model path.
 - ip_adapter_model_name: from `IPAdapter`, it's `ImagePromptEmbProj`, used with `ImageEmbExtractor`。
 - ip_adapter_face_model_name: `IPAdapterFaceID`, from `IPAdapter` to keep faceid，should set `face_image_path`。
 
-**Some parameters that affect the amplitude and effect of generation**：
-- `video_guidance_scale`: similar to text2image, control influence between cond and uncond，default=`3.5`
+**Some parameters that affect the motion range and generation results**：
+- `video_guidance_scale`: Similar to text2image, control influence between cond and uncond，default=`3.5`
 - `guidance_scale`:  The parameter ratio in the first frame image between cond and uncond, default=`3.5`
-- `use_condition_image`:  Whether use the given first frame for video generation.
-- `redraw_condition_image`: whether redraw the given first frame image.
-- `video_negative_prompt`: abbreviation of full `negative_prompt` in config path. default=`V2`.
+- `use_condition_image`:  Whether to use the given first frame for video generation.
+- `redraw_condition_image`: Whether to redraw the given first frame image.
+- `video_negative_prompt`: Abbreviation of full `negative_prompt` in config path. default=`V2`.
 
 
 #### video2video
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  wave_hand   --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas dacne1 --fps 12 --time_size 12
 ```
 **import parameters**
 
-Most of paramters are same as `musev_text2video`. Special parameters of `video2video` are
-1. need set `video_path` in `test_data`. Now support `rgb video` and `controlnet_middle_video`。
-- `which2video`: whether `rgb` video influence initial noise, more than controlnet condition. If True, redraw video.
-- `controlnet_name`：whether use `controlnet condition`, such as `dwpose,depth`.
-- `video_is_middle`: `video_path` is `rgb video` or  `controlnet_middle_video`. could set for every `test_data` in test_data_path.
-- `video_has_condition`: whether condtion_images is aligned with the first frame of video_path. If Not, firstly generate `condition_images` and align with concatation. set in  `test_data`。
+Most of the paramters are same as `musev_text2video`. Special parameters of `video2video` are:
+1. need to set `video_path` in `test_data`. Now supports `rgb video` and `controlnet_middle_video`。
+- `which2video`: whether `rgb` video influences initial noise, more strongly than controlnet condition. If `True`, then redraw video.
+- `controlnet_name`：whether to use `controlnet condition`, such as `dwpose,depth`.
+- `video_is_middle`: `video_path` is `rgb video` or  `controlnet_middle_video`. Can be set for every `test_data` in test_data_path.
+- `video_has_condition`: whether condtion_images is aligned with the first frame of video_path. If Not, firstly generate `condition_images` and then align with concatation. set in `test_data`。
 
 all controlnet_names refer to [mmcm](https://github.com/TMElyralab/MMCM/blob/main/mmcm/vision/feature_extractor/controlnet.py#L513)
 ```python
@@ -457,46 +474,54 @@ all controlnet_names refer to [mmcm](https://github.com/TMElyralab/MMCM/blob/mai
 ```
 
 ### musev_referencenet_pose
-only used for `pose2video`
+Only used for `pose2video`
+Based on `musev_referencenet`, fix `referencenet`, `pose-controlnet`, and `T2I`, train `motion` module and `IPAdapter`.
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  wave_hand   --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dacne1   --fps 12 --time_size 12
 ```
 
 ### musev
-only has motion module, no referencenet, need less gpu memory.
+Only has motion module, no referencenet, requiring less gpu memory.
 #### text2video
 ```bash
 python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --unet_model_name musev   -test_data_path ./configs/tasks/example.yaml  --output_dir ./output  --n_batch 1  --target_datas yongen  --time_size 12 --fps 12
 ```
 #### video2video
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  wave_hand   --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dacne1   --fps 12 --time_size 12
 ```
 
-
 ### Gradio demo
-MuseV provides gradio script to generate GUI in local machine to generate video conveniently. 
+MuseV provides gradio script to generate a GUI in a local machine to generate video conveniently. 
 
 ```bash
 cd scripts/gradio
 python app.py
 ```
 
+
 # Acknowledgements
 
-1. MuseV builds on [TuneAVideo](https://github.com/showlab/Tune-A-Video), [diffusers](https://github.com/huggingface/diffusers), [Moore-AnimateAnyone](https://github.com/MooreThreads/Moore-AnimateAnyone/tree/master/src/pipelines), [animatediff](https://github.com/guoyww/AnimateDiff). 
-2. MuseV builds on dataset `ucf101`, `webvid`.
+1. MuseV has referred much to [TuneAVideo](https://github.com/showlab/Tune-A-Video), [diffusers](https://github.com/huggingface/diffusers), [Moore-AnimateAnyone](https://github.com/MooreThreads/Moore-AnimateAnyone/tree/master/src/pipelines), [animatediff](https://github.com/guoyww/AnimateDiff), [IP-Adapter](https://github.com/tencent-ailab/IP-Adapter), [AnimateAnyone](https://arxiv.org/abs/2311.17117), [VideoFusion](https://arxiv.org/abs/2303.08320). 
+2. MuseV has been built on `ucf101` and `webvid` datasets.
 
-Thanks  for open-sourcing!
+Thanks for open-sourcing!
+
+# Limitation
+There are still many limitations, including
+
+1. Limited types of video generation and limited motion range, partly because of limited types of training data. The released `MuseV` has been trained on approximately 60K human text-video pairs with resolution `512*320`. `MuseV` has greater motion range while lower video quality at lower resolution. `MuseV` tends to generate less motion range with high video quality. Trained on larger, higher resolution, higher quality text-video dataset may make `MuseV` better.
+1. Watermarks may appear because of `webvid`. A cleaner dataset withour watermarks may solve this issue.
+1. Limited types of long video generation. Visual Conditioned Parallel Denoise can solve accumulated error of video generation, but the current method is only suitable for relatively fixed camera scenes.
+1. Undertrained referencenet and IP-Adapter, beacause of limited time and limited resources.
+1. Understructured code. `MuseV`  supports rich and dynamic features, but with complex and unrefacted codes. It takes time to familiarize. 
 
 <!-- # Contribution 暂时不需要组织开源共建 -->
-
 # Citation
-**paper comming soon**
 ```bib
 @article{musev,
   title={MuseV: Infinite-length and High Fidelity Virtual Human Video Generation with Visual Conditioned Parallel Denoising},
-  author={Xia, Zhiqiang and Chen, Zhaokang and Wu, Bin and Li, Chao and Hung, Kwok-Wai and Zhan, Chao and Zhou, Wenjiang},
+  author={Xia, Zhiqiang and Chen, Zhaokang and Wu, Bin and Li, Chao and Hung, Kwok-Wai and Zhan, Chao and He, Yingjie and Zhou, Wenjiang},
   journal={arxiv},
   year={2024}
 }
