@@ -32,8 +32,6 @@ with gr.Blocks() as demo:
                 btn1 = gr.Button("Run")
             out = gr.outputs.Video()
             # pdb.set_trace()
-        with gr.Row():
-            board = gr.Dataframe(value=[["", "", ""]] * 3, interactive=False, type="array",label='Demo Video')
             
         image.change(fn=update_shape,inputs=[image],outputs=[w,h])
         
@@ -45,7 +43,7 @@ with gr.Blocks() as demo:
                 prompt=gr.Textbox(label='Prompt')
                 image=gr.Image(label="Input Image")
                 video=gr.Video(label="Input Video")
-                processor=gr.Dropdown(label="Condition Processor",choices=["Tile","Depth","Canny","Pose"],value="Pose")
+                processor=gr.Dropdown(label="Condition Processor",choices=['pose', 'pose_body', 'pose_hand', 'pose_face', 'pose_hand_body', 'pose_hand_face', 'dwpose', 'dwpose_face', 'dwpose_hand', 'dwpose_body', 'dwpose_body_hand', 'canny', 'tile', 'hed', 'hed_scribble', 'depth', 'pidi', 'normal_bae', 'lineart', 'lineart_anime', 'zoe', 'sam', 'mobile_sam', 'leres', 'content', 'face_detector'],value="Pose")
                 seed=gr.Number(label='Seed')
                 fps=gr.Number(label='Generate Video FPS')
                 gr.Markdown("If W&H is None, then use the Reference Image's Size")
