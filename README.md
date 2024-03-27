@@ -83,22 +83,10 @@ Bellow Case could be found in `configs/tasks/example.yaml`
       <img src=./data/images/seaside4.jpeg width="400">
     </td>
     <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/bb45abb9-5477-4a2a-8f67-7d88195e515f" width="100" controls preload></video>
+      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/9b75a46c-f4e6-45ef-ad02-05729f091c8f" width="100" controls preload></video>
     </td>   
     <td>
     (masterpiece, best quality, highres:1), peaceful beautiful sea scene
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <img src=./data/images/real_girl_seaside2.jpeg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/5fb4e5e8-4a84-47e8-a0d1-7aa24a48e2b8" width="100" controls preload></video>
-    </td>
-    <td>
-      (masterpiece, best quality, highres:1), peaceful beautiful sea scene
     </td>
   </tr>
   <tr>
@@ -268,8 +256,6 @@ Bellow Case could be found in `configs/tasks/example.yaml`
 
 ### VideoMiddle2Video
 
-### Video2Video
-
 
 # News
 - [03/22/2024] release `MuseV` project and trained model `musev`, `muse_referencenet`.
@@ -279,6 +265,7 @@ Bellow Case could be found in `configs/tasks/example.yaml`
 - [ ] training codes.
 - [ ] release pretrained unet model, which is trained with controlnet、referencenet、IPAdapter, which is better on pose2video.
 - [ ] support diffusion transformer generation framework.
+- [ ] release `posealign` module
 
 # Quickstart
 prepare python environment and install extra package like `diffusers`, `controlnet_aux`, `mmcm`.
@@ -339,7 +326,7 @@ cd MuseV
 ```bash
 git clone https://huggingface.co/TMElyralab/MuseV ./checkpoints
 ```
-- `motion`: text2video model.
+- `motion`: text2video model trained on tiny `ucf101` and tiny `webvid` dataset, approximately 60K videos text pairs.
     - `musev/unet`: only has and train `unet` motion module.
     - `musev_referencenet`: train `unet` module, `referencenet`, `IPAdapter`
         - `unet`: `motion` module, which has `to_k`, `to_v` in `Attention` layer refer to `IPAdapter`
@@ -427,7 +414,10 @@ python app.py
 
 # Acknowledgements
 
-MuseV builds on `TuneAVideo`, `diffusers`. Thanks  for open-sourcing!
+1. MuseV builds on [TuneAVideo](https://github.com/showlab/Tune-A-Video), [diffusers](https://github.com/huggingface/diffusers), [Moore-AnimateAnyone](https://github.com/MooreThreads/Moore-AnimateAnyone/tree/master/src/pipelines). 
+2. MuseV builds on dataset `ucf101`, `webvid`.
+
+Thanks  for open-sourcing!
 
 <!-- # Contribution 暂时不需要组织开源共建 -->
 
@@ -445,4 +435,5 @@ MuseV builds on `TuneAVideo`, `diffusers`. Thanks  for open-sourcing!
 1. `code`: The code of MuseV is released under the MIT License. There is no limitation for both academic and commercial usage.
 1. `model`: The trained model are available for non-commercial research purposes only.
 1. `other opensource model`: Other open-source models used must comply with their license, such as `insightface`, `IP-Adapter`, `ft-mse-vae`, etc.
+1. The testdata are collected from internet, which are available for non-commercial research purposes only.
 1. `AIGC`: This project strives to impact the domain of AI-driven video generation positively. Users are granted the freedom to create videos using this tool, but they are expected to comply with local laws and utilize it responsibly. The developers do not assume any responsibility for potential misuse by users.
