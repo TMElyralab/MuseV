@@ -344,7 +344,7 @@ You are recommended to use `docker` primarily to prepare python environment.
 ### Method 1: docker
 1. pull docker image
 ```bash
-docker pull docker pull anchorxia/musev:latest
+docker pull anchorxia/musev:latest
 ```
 2. run docker
 ```bash
