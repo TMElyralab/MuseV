@@ -396,13 +396,13 @@ cd MuseV
 ```bash
 git clone https://huggingface.co/TMElyralab/MuseV ./checkpoints
 ```
-- `motion`: text2video model, trained on tiny `ucf101` and tiny `webvid` dataset, approximately 60K videos text pairs.
-    - `musev/unet`: only has and train `unet` motion module, need less gpu memory.
-    - `musev_referencenet`: train `unet` module, `referencenet`, `IPAdapter`
+- `motion`: text2video model, trained on tiny `ucf101` and tiny `webvid` dataset, approximately 60K videos text pairs. GPU memory consumption  testing on `resolution`$=512*512$, `time_size=12`.
+    - `musev/unet`: only has and train `unet` motion module. `GPU memory consumption` $\approx 8G$. 
+    - `musev_referencenet`: train `unet` module, `referencenet`, `IPAdapter`. `GPU memory consumption` $\approx 12G$. 
         - `unet`: `motion` module, which has `to_k`, `to_v` in `Attention` layer refer to `IPAdapter`
         - `referencenet`: similar to `AnimateAnyone`
         - `ip_adapter_image_proj.bin`: images clip emb project layer, refer to `IPAdapter`
-    - `musev_referencenet_pose`: based on `musev_referencenet`, fix `referencenet`and `controlnet_pose`, train `unet motion` and `IPAdapter`
+    - `musev_referencenet_pose`: based on `musev_referencenet`, fix `referencenet`and `controlnet_pose`, train `unet motion` and `IPAdapter`. `GPU memory consumption` $\approx 12G$
 - `t2i/sd1.5`: text2image model, paramter are frozen when training motion module.
     - majicmixRealv6Fp16: example, could be replaced with other t2i base. download from [majicmixRealv6Fp16](https://civitai.com/models/43331/majicmix-realistic)
 - `IP-Adapter/models`: download from [IPAdapter](https://huggingface.co/h94/IP-Adapter/tree/main)
