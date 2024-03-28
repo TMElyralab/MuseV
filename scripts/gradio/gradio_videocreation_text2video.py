@@ -150,8 +150,8 @@ cross_attention_dim = args.cross_attention_dim
 time_size = args.time_size  # 一次视频生成的帧数
 n_batch = args.n_batch  # 按照time_size的尺寸 生成n_batch次，总帧数 = time_size * n_batch
 fps = args.fps
-need_redraw = args.need_redraw  # 视频重绘视频使用视频网络
-use_video_redraw = args.use_video_redraw  # 视频重绘视频使用视频网络
+# need_redraw = args.need_redraw  # 视频重绘视频使用视频网络
+# use_video_redraw = args.use_video_redraw  # 视频重绘视频使用视频网络
 fix_condition_images = args.fix_condition_images
 use_condition_image = args.use_condition_image  # 当 test_data 中有图像时，作为初始图像
 redraw_condition_image = args.redraw_condition_image  # 用于视频生成的首帧是否使用重绘后的
@@ -878,8 +878,8 @@ def online_t2v_inference(
             ip_adapter_scale=ip_adapter_scale,
             redraw_condition_image_with_ipdapter=redraw_condition_image_with_ipdapter,
             prompt_only_use_image_prompt=prompt_only_use_image_prompt,
-            need_redraw=need_redraw,
-            use_video_redraw=use_video_redraw,
+            #need_redraw=need_redraw,
+            #use_video_redraw=use_video_redraw,
             # serial_denoise parameter start
             record_mid_video_noises=record_mid_video_noises,
             record_mid_video_latents=record_mid_video_latents,
