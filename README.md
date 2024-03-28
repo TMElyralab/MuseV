@@ -337,11 +337,13 @@ The character of talk, `Sun Xinying` is the partner of TME, who can be followed 
 # Quickstart
 Prepare python environment and install extra package like `diffusers`, `controlnet_aux`, `mmcm`.
 
-You are recommended to use `docker` primarily to prepare python environment.
 
 ## Prepare environment
+You are recommended to use `docker` primarily to prepare python environment.
+### prepare python env
+** Attention **: we only test with docker, there are maybe trouble with conda, or requirement. We will try to fix it. Use `docker` Please.
 
-### Method 1: docker
+#### Method 1: docker
 1. pull docker image
 ```bash
 docker pull anchorxia/musev:latest
@@ -352,17 +354,17 @@ docker run --gpus all -it --entrypoint /bin/bash anchorxia/musev:latest
 ```
 The default conda env is `musev`.
 
-### Method 2: conda 
+#### Method 2: conda 
 create conda environment from environment.yaml
 ```
 conda env create --name musev --file ./environment.yml
 ```
-### Method 3: pip requirements
+#### Method 3: pip requirements
 ```
 pip install -r requirements.txt
 ```
-
-**install mmlab package**
+#### Prepare mmlab package
+if not use docker, should install mmlab package additionally.
 ```bash
 pip install--no-cache-dir -U openmim 
 mim install mmengine 
@@ -371,13 +373,12 @@ mim install "mmdet>=3.1.0"
 mim install "mmpose>=1.1.0" 
 ```
 
-
-### Environment Variables Setting
-#### custom package / modified package
+### Prepare custom package / modified package
+#### clone
 ```bash
 git clone --recursive https://github.com/TMElyralab/MuseV.git
 ```
-prepare PYTHONPATH
+#### prepare PYTHONPATH
 ```bash
 current_dir=$(pwd)
 export PYTHONPATH=${PYTHONPATH}:${current_dir}/MuseV
