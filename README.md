@@ -10,7 +10,7 @@ Kwok-Wai Hung,
 Chao Zhan,
 Yingjie He, 
 Wenjiang Zhou
-(<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author)
+(<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author, benbinwu@tencent.com)
 </font>
 
 **[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**    **[project](comming soon)**    **Technical report (comming soon)**
@@ -292,6 +292,7 @@ In `duffy` mode, pose of the vision condition frame is not aligned with the firs
 </table >
 
 ### MuseTalk
+The character of talk, `Sun Xinying` is the partner of TME, who can be followed in [douyin](https://www.douyin.com/user/MS4wLjABAAAAWDThbMPN_6Xmm_JgXexbOii1K-httbu2APdG8DvDyM8).
 
 <table class="center">
     <tr style="font-weight: bolder;">
@@ -502,7 +503,7 @@ python app.py
 
 # Acknowledgements
 
-1. MuseV has referred much to [TuneAVideo](https://github.com/showlab/Tune-A-Video), [diffusers](https://github.com/huggingface/diffusers), [Moore-AnimateAnyone](https://github.com/MooreThreads/Moore-AnimateAnyone/tree/master/src/pipelines), [animatediff](https://github.com/guoyww/AnimateDiff), [IP-Adapter](https://github.com/tencent-ailab/IP-Adapter), [AnimateAnyone](https://arxiv.org/abs/2311.17117), [VideoFusion](https://arxiv.org/abs/2303.08320). 
+1. MuseV has referred much to [TuneAVideo](https://github.com/showlab/Tune-A-Video), [diffusers](https://github.com/huggingface/diffusers), [Moore-AnimateAnyone](https://github.com/MooreThreads/Moore-AnimateAnyone/tree/master/src/pipelines), [animatediff](https://github.com/guoyww/AnimateDiff), [IP-Adapter](https://github.com/tencent-ailab/IP-Adapter), [AnimateAnyone](https://arxiv.org/abs/2311.17117), [VideoFusion](https://arxiv.org/abs/2303.08320), [insightface](https://github.com/deepinsight/insightface). 
 2. MuseV has been built on `ucf101` and `webvid` datasets.
 
 Thanks for open-sourcing!
@@ -510,11 +511,13 @@ Thanks for open-sourcing!
 # Limitation
 There are still many limitations, including
 
+1. Lack of generalization ability. Some visual condition image perform well, some perform bad. Some t2i pretraied model perform well, some perform bad.
 1. Limited types of video generation and limited motion range, partly because of limited types of training data. The released `MuseV` has been trained on approximately 60K human text-video pairs with resolution `512*320`. `MuseV` has greater motion range while lower video quality at lower resolution. `MuseV` tends to generate less motion range with high video quality. Trained on larger, higher resolution, higher quality text-video dataset may make `MuseV` better.
 1. Watermarks may appear because of `webvid`. A cleaner dataset withour watermarks may solve this issue.
 1. Limited types of long video generation. Visual Conditioned Parallel Denoise can solve accumulated error of video generation, but the current method is only suitable for relatively fixed camera scenes.
 1. Undertrained referencenet and IP-Adapter, beacause of limited time and limited resources.
-1. Understructured code. `MuseV`  supports rich and dynamic features, but with complex and unrefacted codes. It takes time to familiarize. 
+1. Understructured code. `MuseV`  supports rich and dynamic features, but with complex and unrefacted codes. It takes time to familiarize.
+   
 
 <!-- # Contribution 暂时不需要组织开源共建 -->
 # Citation
