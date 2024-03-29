@@ -292,7 +292,7 @@ In `duffy` mode, pose of the vision condition frame is not aligned with the firs
 </table >
 
 ### MuseTalk
-The character of talk, `Sun Xinying` is the partner of TME, who can be followed in [douyin](https://www.douyin.com/user/MS4wLjABAAAAWDThbMPN_6Xmm_JgXexbOii1K-httbu2APdG8DvDyM8).
+The character of talk, `Sun Xinying` is a supermodel KOL. You can follow her on [douyin](https://www.douyin.com/user/MS4wLjABAAAAWDThbMPN_6Xmm_JgXexbOii1K-httbu2APdG8DvDyM8).
 
 <table class="center">
     <tr style="font-weight: bolder;">
