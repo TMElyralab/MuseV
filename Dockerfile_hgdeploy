@@ -1,0 +1,43 @@
+FROM anchorxia/musev:1.0.1
+
+#MAINTAINER 维护者信息
+LABEL MAINTAINER="anchorxia"
+LABEL Email="anchorxia@tencent.com, zhanchao019@foxmail.com"
+LABEL Description="musev gradio image, from docker pull anchorxia/musev:latest"
+
+# RUN useradd -r huggingface_root
+# USER huggingface_root
+
+SHELL ["/bin/bash", "--login", "-c"]
+
+USER root
+RUN chown root:root -R /root
+
+    
+WORKDIR /root
+
+RUN git clone --recursive https://github.com/TMElyralab/MuseV.git -b deploy
+
+
+RUN echo "export PYTHONPATH=\${PYTHONPATH}:/root/MuseV" >> ~/.bashrc \
+    && echo "export PYTHONPATH=\${PYTHONPATH}:/root/MuseV/MMCM" >> ~/.bashrc \
+    && echo "export PYTHONPATH=\${PYTHONPATH}:/root/MuseV/diffusers/src" >> ~/.bashrc \
+    && echo "export PYTHONPATH=\${PYTHONPATH}:/root/MuseV/controlnet_aux/src" >> ~/.bashrc 
+    
+
+#WORKDIR /root/MuseV/scripts/gradio
+RUN chmod -R 777 /root
+RUN mv /root/MuseV/* /
+
+WORKDIR /scripts/gradio
+
+
+
+#### install requirement here
+RUN pip install cuid gradio huggingface_hub
+#RUN chmod -R 777 /
+RUN mkdir /checkpoints
+
+EXPOSE 7860
+#todo: need change to app.py
+CMD ["python", "app_test.py"]
