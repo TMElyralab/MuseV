@@ -18,6 +18,8 @@ def download_model():
         print("Already download the model.")
 download_model()# for huggingface deployment.
 
+def test():
+    return None
 
 def update_shape(image):
     if image!=None:
@@ -84,13 +86,11 @@ with gr.Blocks(css=css) as demo:
                     h=gr.Number(label='Height',value=768)
                 btn1 = gr.Button("Generate")
             out = gr.outputs.Video()
-            # pdb.set_trace()
-        with gr.Row():
-            board = gr.Dataframe(value=[["", "", ""]] * 3, interactive=False, type="array",label='Demo Video')
+
             
         image.change(fn=update_shape,inputs=[image],outputs=[w,h])
         
-        btn1.click(fn=online_t2v_inference, inputs=[prompt,image,seed,fps,w,h,video_length], outputs=out)
+        #btn1.click(fn=test, inputs=None, outputs=out)
 
     with gr.Tab("Video to Video"):
         with gr.Row():
@@ -113,7 +113,7 @@ with gr.Blocks(css=css) as demo:
             out1 = gr.outputs.Video()
         image.change(fn=update_shape,inputs=[image],outputs=[w,h])
 
-        btn2.click(fn=online_v2v_inference, inputs=[prompt,image,video,processor,seed,fps,w,h,video_length], outputs=out1)
+        #btn2.click(fn=online_v2v_inference, inputs=[prompt,image,video,processor,seed,fps,w,h,video_length], outputs=out1)
 
 
 # Set the IP and port
