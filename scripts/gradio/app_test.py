@@ -85,7 +85,7 @@ with gr.Blocks(css=css) as demo:
                     w=gr.Number(label='Width',value=512)
                     h=gr.Number(label='Height',value=768)
                 btn1 = gr.Button("Generate")
-            out = gr.outputs.Video()
+            out = gr.Video()
 
             
         image.change(fn=update_shape,inputs=[image],outputs=[w,h])
@@ -110,7 +110,7 @@ with gr.Blocks(css=css) as demo:
                     w=gr.Number(label='Width',value=512)
                     h=gr.Number(label='Height',value=704)
                 btn2 = gr.Button("Generate")
-            out1 = gr.outputs.Video()
+            out1 = gr.Video()
         image.change(fn=update_shape,inputs=[image],outputs=[w,h])
 
         #btn2.click(fn=online_v2v_inference, inputs=[prompt,image,video,processor,seed,fps,w,h,video_length], outputs=out1)
