@@ -22,7 +22,10 @@ download_model()# for huggingface deployment.
 
 
 def update_shape(image):
-    h,w,_=image.shape
+    if image!=None:
+        h,w,_=image.shape
+    else:
+        h,w=768,512
     return w,h
 
 class ConcatenateBlock(gr.blocks.Block):
@@ -117,7 +120,7 @@ with gr.Blocks(css=css) as demo:
 
 # Set the IP and port
 ip_address = "0.0.0.0"  # Replace with your desired IP address
-port_number = 12345      # Replace with your desired port number
+port_number = 7860      # Replace with your desired port number
 
 
-demo.queue().launch(share=False, debug=True, server_name=ip_address, server_port=port_number)
+demo.queue().launch(share=False, debug=False, server_name=ip_address, server_port=port_number)
