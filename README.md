@@ -341,7 +341,7 @@ Prepare python environment and install extra package like `diffusers`, `controln
 ## Prepare environment
 You are recommended to use `docker` primarily to prepare python environment.
 ### prepare python env
-** Attention **: we only test with docker, there are maybe trouble with conda, or requirement. We will try to fix it. Use `docker` Please.
+**Attention**: we only test with docker, there are maybe trouble with conda, or requirement. We will try to fix it. Use `docker` Please.
 
 #### Method 1: docker
 1. pull docker image
