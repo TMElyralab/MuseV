@@ -1,4 +1,4 @@
-# MuseV
+# MuseV [English](README.md) [中文](README-zh.md)
 
 <font size=5>MuseV: Infinite-length and High Fidelity Virtual Human Video Generation with Visual Conditioned  Parallel Denoising
 </br>

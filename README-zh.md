@@ -1,4 +1,4 @@
-# MuseV
+# MuseV [English](README.md) [中文](README-zh.md)
 
 <font size=5>MuseV：基于视觉条件并行去噪的无限长度和高保真虚拟人视频生成。
 </br>
