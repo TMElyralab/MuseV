@@ -7,13 +7,16 @@ from gradio_text2video import online_t2v_inference
 from gradio_video2video import online_v2v_inference
 from huggingface_hub import snapshot_download
 
+ProjectDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+CheckpointsDir = os.path.join(ProjectDir, "checkpoints")
+
 
 def download_model():
-    if not os.path.exists("../../checkpoints"):
+    if not os.path.exists(CheckpointsDir):
         print("Checkpoint Not Downloaded, start downloading...")
         snapshot_download(
             repo_id="TMElyralab/MuseV",
-            local_dir="../../checkpoints",
+            local_dir=CheckpointsDir,
             max_workers=8,
         )
     else:
