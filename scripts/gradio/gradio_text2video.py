@@ -45,6 +45,10 @@ from musev.models.unet_loader import load_unet_by_name
 from musev.utils.util import save_videos_grid_with_opencv
 from musev import logger
 
+need_load_predictor = False
+from gradio_video2video import sd_predictor as video_sd_predictor
+
+
 logger.setLevel("INFO")
 
 file_dir = os.path.dirname(__file__)
@@ -458,7 +462,7 @@ def read_image_and_name(path):
     return images, name
 
 
-if referencenet_model_name is not None:
+if referencenet_model_name is not None and need_load_predictor:
     referencenet = load_referencenet_by_name(
         model_name=referencenet_model_name,
         # sd_model=sd_model_path,
@@ -470,7 +474,7 @@ else:
     referencenet = None
     referencenet_model_name = "no"
 
-if vision_clip_extractor_class_name is not None:
+if vision_clip_extractor_class_name is not None and need_load_predictor:
     vision_clip_extractor = load_vision_clip_encoder_by_name(
         ip_image_encoder=vision_clip_model_path,
         vision_clip_extractor_class_name=vision_clip_extractor_class_name,
@@ -482,7 +486,7 @@ else:
     vision_clip_extractor = None
     logger.info(f"vision_clip_extractor, None")
 
-if ip_adapter_model_name is not None:
+if ip_adapter_model_name is not None and need_load_predictor:
     ip_adapter_image_proj = load_ip_adapter_image_proj_by_name(
         model_name=ip_adapter_model_name,
         ip_image_encoder=ip_adapter_model_params_dict.get(
@@ -508,19 +512,23 @@ for model_name, sd_model_params in sd_model_params_dict.items():
     sd_model_path = sd_model_params["sd"]
     test_model_vae_model_path = sd_model_params.get("vae", vae_model_path)
 
-    unet = load_unet_by_name(
-        model_name=unet_model_name,
-        sd_unet_model=unet_model_path,
-        sd_model=sd_model_path,
-        # sd_model="../../checkpoints//Moore-AnimateAnyone/AnimateAnyone/denoising_unet.pth",
-        cross_attention_dim=cross_attention_dim,
-        need_t2i_facein=facein_model_name is not None,
-        # facein 目前没参与训练，但在unet中定义了，载入相关参数会报错，所以用strict控制
-        strict=not (facein_model_name is not None),
-        need_t2i_ip_adapter_face=ip_adapter_face_model_name is not None,
+    unet = (
+        load_unet_by_name(
+            model_name=unet_model_name,
+            sd_unet_model=unet_model_path,
+            sd_model=sd_model_path,
+            # sd_model="../../checkpoints//Moore-AnimateAnyone/AnimateAnyone/denoising_unet.pth",
+            cross_attention_dim=cross_attention_dim,
+            need_t2i_facein=facein_model_name is not None,
+            # facein 目前没参与训练，但在unet中定义了，载入相关参数会报错，所以用strict控制
+            strict=not (facein_model_name is not None),
+            need_t2i_ip_adapter_face=ip_adapter_face_model_name is not None,
+        )
+        if need_load_predictor
+        else None
     )
 
-    if facein_model_name is not None:
+    if facein_model_name is not None and need_load_predictor:
         (
             face_emb_extractor,
             facein_image_proj,
@@ -542,7 +550,7 @@ for model_name, sd_model_params in sd_model_params_dict.items():
         face_emb_extractor = None
         facein_image_proj = None
 
-    if ip_adapter_face_model_name is not None:
+    if ip_adapter_face_model_name is not None and need_load_predictor:
         (
             ip_adapter_face_emb_extractor,
             ip_adapter_face_image_proj,
@@ -567,22 +575,26 @@ for model_name, sd_model_params in sd_model_params_dict.items():
 
     print("test_model_vae_model_path", test_model_vae_model_path)
 
-    sd_predictor = DiffusersPipelinePredictor(
-        sd_model_path=sd_model_path,
-        unet=unet,
-        lora_dict=lora_dict,
-        lcm_lora_dct=lcm_lora_dct,
-        device=device,
-        dtype=torch_dtype,
-        negative_embedding=negative_embedding,
-        referencenet=referencenet,
-        ip_adapter_image_proj=ip_adapter_image_proj,
-        vision_clip_extractor=vision_clip_extractor,
-        facein_image_proj=facein_image_proj,
-        face_emb_extractor=face_emb_extractor,
-        vae_model=test_model_vae_model_path,
-        ip_adapter_face_emb_extractor=ip_adapter_face_emb_extractor,
-        ip_adapter_face_image_proj=ip_adapter_face_image_proj,
+    sd_predictor = (
+        DiffusersPipelinePredictor(
+            sd_model_path=sd_model_path,
+            unet=unet,
+            lora_dict=lora_dict,
+            lcm_lora_dct=lcm_lora_dct,
+            device=device,
+            dtype=torch_dtype,
+            negative_embedding=negative_embedding,
+            referencenet=referencenet,
+            ip_adapter_image_proj=ip_adapter_image_proj,
+            vision_clip_extractor=vision_clip_extractor,
+            facein_image_proj=facein_image_proj,
+            face_emb_extractor=face_emb_extractor,
+            vae_model=test_model_vae_model_path,
+            ip_adapter_face_emb_extractor=ip_adapter_face_emb_extractor,
+            ip_adapter_face_image_proj=ip_adapter_face_image_proj,
+        )
+        if need_load_predictor
+        else video_sd_predictor
     )
     logger.debug(f"load referencenet"),
 
@@ -595,7 +607,14 @@ def generate_cuid():
 
 
 def online_t2v_inference(
-    prompt, image_np, seed, fps, w, h, video_len, progress=gr.Progress(track_tqdm=True)
+    prompt,
+    image_np,
+    seed,
+    fps,
+    w,
+    h,
+    video_len,
+    progress=gr.Progress(track_tqdm=True),
 ):
     progress(0, desc="Starting...")
     # Save the uploaded image to a specified path
@@ -878,8 +897,8 @@ def online_t2v_inference(
             ip_adapter_scale=ip_adapter_scale,
             redraw_condition_image_with_ipdapter=redraw_condition_image_with_ipdapter,
             prompt_only_use_image_prompt=prompt_only_use_image_prompt,
-            #need_redraw=need_redraw,
-            #use_video_redraw=use_video_redraw,
+            # need_redraw=need_redraw,
+            # use_video_redraw=use_video_redraw,
             # serial_denoise parameter start
             record_mid_video_noises=record_mid_video_noises,
             record_mid_video_latents=record_mid_video_latents,
