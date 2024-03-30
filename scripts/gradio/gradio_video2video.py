@@ -61,7 +61,7 @@ args_dict = {
     "context_schedule": "uniform_v2",
     "context_stride": 1,
     "controlnet_conditioning_scale": 1.0,
-    "controlnet_name": "dwpose",
+    "controlnet_name": "dwpose_body_hand",
     "cross_attention_dim": 768,
     "enable_zero_snr": False,
     "end_to_end": True,
@@ -665,7 +665,7 @@ def online_v2v_inference(
     image_path = os.path.join(CACHE_PATH, f"{image_cuid}.jpg")
     image = Image.fromarray(image_np)
     image.save(image_path)
-    time_size=int(video_length)
+    time_size = int(video_length)
     test_data = {
         "name": image_cuid,
         "prompt": prompt,
