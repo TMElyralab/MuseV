@@ -45,8 +45,7 @@ from musev.models.unet_loader import load_unet_by_name
 from musev.utils.util import save_videos_grid_with_opencv
 from musev import logger
 
-need_load_predictor = False
-from gradio_video2video import sd_predictor as video_sd_predictor
+need_load_predictor = True
 
 
 logger.setLevel("INFO")
@@ -575,27 +574,24 @@ for model_name, sd_model_params in sd_model_params_dict.items():
 
     print("test_model_vae_model_path", test_model_vae_model_path)
 
-    sd_predictor = (
-        DiffusersPipelinePredictor(
-            sd_model_path=sd_model_path,
-            unet=unet,
-            lora_dict=lora_dict,
-            lcm_lora_dct=lcm_lora_dct,
-            device=device,
-            dtype=torch_dtype,
-            negative_embedding=negative_embedding,
-            referencenet=referencenet,
-            ip_adapter_image_proj=ip_adapter_image_proj,
-            vision_clip_extractor=vision_clip_extractor,
-            facein_image_proj=facein_image_proj,
-            face_emb_extractor=face_emb_extractor,
-            vae_model=test_model_vae_model_path,
-            ip_adapter_face_emb_extractor=ip_adapter_face_emb_extractor,
-            ip_adapter_face_image_proj=ip_adapter_face_image_proj,
-        )
-        if need_load_predictor
-        else video_sd_predictor
+    sd_predictor = DiffusersPipelinePredictor(
+        sd_model_path=sd_model_path,
+        unet=unet,
+        lora_dict=lora_dict,
+        lcm_lora_dct=lcm_lora_dct,
+        device=device,
+        dtype=torch_dtype,
+        negative_embedding=negative_embedding,
+        referencenet=referencenet,
+        ip_adapter_image_proj=ip_adapter_image_proj,
+        vision_clip_extractor=vision_clip_extractor,
+        facein_image_proj=facein_image_proj,
+        face_emb_extractor=face_emb_extractor,
+        vae_model=test_model_vae_model_path,
+        ip_adapter_face_emb_extractor=ip_adapter_face_emb_extractor,
+        ip_adapter_face_image_proj=ip_adapter_face_image_proj,
     )
+
     logger.debug(f"load referencenet"),
 
     # TODO:这里修改为gradio

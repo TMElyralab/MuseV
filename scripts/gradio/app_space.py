@@ -1,10 +1,12 @@
 import os
-import gradio as gr
+import time
 import pdb
+
 import cuid
+import gradio as gr
+
 
 from huggingface_hub import snapshot_download
-
 
 ProjectDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 CheckpointsDir = os.path.join(ProjectDir, "checkpoints")
@@ -13,20 +15,22 @@ CheckpointsDir = os.path.join(ProjectDir, "checkpoints")
 def download_model():
     if not os.path.exists(CheckpointsDir):
         print("Checkpoint Not Downloaded, start downloading...")
+        tic = time.time()
         snapshot_download(
             repo_id="TMElyralab/MuseV",
             local_dir=CheckpointsDir,
             max_workers=8,
         )
+        toc = time.time()
+        print(f"download cost {toc-tic} seconds")
     else:
         print("Already download the model.")
 
 
 download_model()  # for huggingface deployment.
 
-
-def test():
-    return None
+# from gradio_video2video import online_v2v_inference
+from gradio_text2video import online_t2v_inference
 
 
 def update_shape(image):
@@ -125,37 +129,63 @@ with gr.Blocks(css=css) as demo:
                     w = gr.Number(label="Width", value=512)
                     h = gr.Number(label="Height", value=768)
                 btn1 = gr.Button("Generate")
-            out = gr.Video()
-
-        image.change(fn=update_shape, inputs=[image], outputs=[w, h])
-
-        # btn1.click(fn=test, inputs=None, outputs=out)
-
-    with gr.Tab("Video to Video"):
+            out = gr.outputs.Video()
+            # pdb.set_trace()
         with gr.Row():
-            with gr.Column():
-                prompt = gr.Textbox(label="Prompt")
-                image = gr.Image(label="Reference Image")
-                video = gr.Video(label="Input Video")
-                # radio = gr.inputs.Radio(, label="Select an option")
-                # ctr_button = gr.inputs.Button(label="Add ControlNet List")
-                # output_text = gr.outputs.Textbox()
-                processor = gr.Textbox(
-                    label=f"Control Condition. Select from {control_options}",
-                    value="dwpose,",
-                )
-                seed = gr.Number(label="Seed")
-                video_length = gr.Number(label="Video Length", value=12)
-                fps = gr.Number(label="Generate Video FPS", value=12)
-                gr.Markdown("If W&H is None, then use the Reference Image's Size")
-                with gr.Row():
-                    w = gr.Number(label="Width", value=512)
-                    h = gr.Number(label="Height", value=704)
-                btn2 = gr.Button("Generate")
-            out1 = gr.Video()
-        image.change(fn=update_shape, inputs=[image], outputs=[w, h])
+            board = gr.Dataframe(
+                value=[["", "", ""]] * 3,
+                interactive=False,
+                type="array",
+                label="Demo Video",
+            )
 
-        # btn2.click(fn=online_v2v_inference, inputs=[prompt,image,video,processor,seed,fps,w,h,video_length], outputs=out1)
+        # image.change(fn=update_shape, inputs=[image], outputs=[w, h])
+
+        btn1.click(
+            fn=online_t2v_inference,
+            inputs=[prompt, image, seed, fps, w, h, video_length],
+            outputs=out,
+        )
+
+    # with gr.Tab("Video to Video"):
+    #     with gr.Row():
+    #         with gr.Column():
+    #             prompt = gr.Textbox(label="Prompt")
+    #             image = gr.Image(label="Reference Image")
+    #             video = gr.Video(label="Input Video")
+    #             # radio = gr.inputs.Radio(, label="Select an option")
+    #             # ctr_button = gr.inputs.Button(label="Add ControlNet List")
+    #             # output_text = gr.outputs.Textbox()
+    #             processor = gr.Textbox(
+    #                 label=f"Control Condition. gradio code now only support dwpose_body_hand, use command can support multi of {control_options}",
+    #                 value="dwpose_body_hand",
+    #             )
+    #             seed = gr.Number(label="Seed")
+    #             video_length = gr.Number(label="Video Length", value=12)
+    #             fps = gr.Number(label="Generate Video FPS", value=12)
+    #             gr.Markdown("If W&H is None, then use the Reference Image's Size")
+    #             with gr.Row():
+    #                 w = gr.Number(label="Width", value=512)
+    #                 h = gr.Number(label="Height", value=704)
+    #             btn2 = gr.Button("Generate")
+    #         out1 = gr.outputs.Video()
+    #     # image.change(fn=update_shape, inputs=[image], outputs=[w, h])
+
+    #     btn2.click(
+    #         fn=online_v2v_inference,
+    #         inputs=[
+    #             prompt,
+    #             image,
+    #             video,
+    #             processor,
+    #             seed,
+    #             fps,
+    #             w,
+    #             h,
+    #             video_length,
+    #         ],
+    #         outputs=out1,
+    #     )
 
 
 # Set the IP and port

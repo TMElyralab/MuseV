@@ -25,7 +25,7 @@ RUN echo "docker start"\
   && which python \
   && pwd
 
-RUN git clone -b deploy --recursive https://github.com/TMElyralab/MuseV.git
+RUN git clone -b hg_space --recursive https://github.com/TMElyralab/MuseV.git
 # RUN mkdir ./MuseV/checkpoints \
 #   && ls -l ./MuseV
 RUN chmod -R 777 /home/user/app/MuseV
