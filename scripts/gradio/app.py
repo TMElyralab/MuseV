@@ -3,8 +3,7 @@ import gradio as gr
 import pdb
 import cuid
 
-from gradio_text2video import online_t2v_inference
-from gradio_video2video import online_v2v_inference
+
 from huggingface_hub import snapshot_download
 
 ProjectDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -24,6 +23,9 @@ def download_model():
 
 
 download_model()  # for huggingface deployment.
+
+from gradio_text2video import online_t2v_inference
+from gradio_video2video import online_v2v_inference
 
 
 def update_shape(image):
