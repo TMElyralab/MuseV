@@ -29,6 +29,8 @@ We will soon release `MuseTalk`, a real-time high quality lip sync model, which 
 5. supports multi reference image technology, including `IPAdapter`, `ReferenceOnly`, `ReferenceNet`, `IPAdapterFaceID`.
 6. training codes (comming very soon).
 
+# Important bug fixes
+1. `musev_referencenet_pose`: model_name of `unet`, `ip_adapter` of Command is not correct, please use `musev_referencenet_pose` instead of `musev_referencenet`.
 
 # News
 - [03/27/2024] release `MuseV` project and trained model `musev`, `muse_referencenet`.
@@ -477,9 +479,9 @@ all controlnet_names refer to [mmcm](https://github.com/TMElyralab/MMCM/blob/mai
 
 ### musev_referencenet_pose
 Only used for `pose2video`
-Based on `musev_referencenet`, fix `referencenet`, `pose-controlnet`, and `T2I`, train `motion` module and `IPAdapter`.
+train based on `musev_referencenet`, fix `referencenet`, `pose-controlnet`, and `T2I`, train `motion` module and `IPAdapter`.
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dacne1   --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet_pose --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet_pose    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dacne1   --fps 12 --time_size 12
 ```
 
 ### musev
