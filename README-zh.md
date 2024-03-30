@@ -31,6 +31,8 @@ Wenjiang Zhou
 1. 支持多参考图像技术，包括 `IPAdapter`、`ReferenceOnly`、`ReferenceNet`、`IPAdapterFaceID`。
 1. 我们后面也会推出训练代码。
 
+# 重要更新
+1. `musev_referencenet_pose`: `unet`, `ip_adapter` 的模型名字指定错误，请使用 `musev_referencenet_pose`而不是`musev_referencenet`，请使用最新的main分支。
 
 # 进展
 - [2024年3月27日] 发布 `MuseV` 项目和训练好的模型 `musev`、`muse_referencenet`、`muse_referencenet_pose`。
@@ -482,9 +484,9 @@ python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --un
 
 ### musev_referencenet_pose
 仅用于 `pose2video`
-基于 `musev_referencenet`，修复 `referencenet`、`pose-controlnet` 和 `T2I`，训练 `motion` 模块和 `IPAdapter`。
+基于 `musev_referencenet` 训练，固定 `referencenet`、`pose-controlnet` 和 `T2I`，训练 `motion` 模块和 `IPAdapter`。
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dacne1   --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet_pose --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet_pose    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dacne1   --fps 12 --time_size 12
 ```
 
 ### musev
