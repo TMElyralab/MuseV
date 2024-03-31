@@ -45,8 +45,7 @@ from musev.models.unet_loader import load_unet_by_name
 from musev.utils.util import save_videos_grid_with_opencv
 from musev import logger
 
-need_load_predictor = False
-from gradio_video2video import sd_predictor as video_sd_predictor
+need_load_predictor = True
 
 
 logger.setLevel("INFO")
@@ -575,27 +574,24 @@ for model_name, sd_model_params in sd_model_params_dict.items():
 
     print("test_model_vae_model_path", test_model_vae_model_path)
 
-    sd_predictor = (
-        DiffusersPipelinePredictor(
-            sd_model_path=sd_model_path,
-            unet=unet,
-            lora_dict=lora_dict,
-            lcm_lora_dct=lcm_lora_dct,
-            device=device,
-            dtype=torch_dtype,
-            negative_embedding=negative_embedding,
-            referencenet=referencenet,
-            ip_adapter_image_proj=ip_adapter_image_proj,
-            vision_clip_extractor=vision_clip_extractor,
-            facein_image_proj=facein_image_proj,
-            face_emb_extractor=face_emb_extractor,
-            vae_model=test_model_vae_model_path,
-            ip_adapter_face_emb_extractor=ip_adapter_face_emb_extractor,
-            ip_adapter_face_image_proj=ip_adapter_face_image_proj,
-        )
-        if need_load_predictor
-        else video_sd_predictor
+    sd_predictor = DiffusersPipelinePredictor(
+        sd_model_path=sd_model_path,
+        unet=unet,
+        lora_dict=lora_dict,
+        lcm_lora_dct=lcm_lora_dct,
+        device=device,
+        dtype=torch_dtype,
+        negative_embedding=negative_embedding,
+        referencenet=referencenet,
+        ip_adapter_image_proj=ip_adapter_image_proj,
+        vision_clip_extractor=vision_clip_extractor,
+        facein_image_proj=facein_image_proj,
+        face_emb_extractor=face_emb_extractor,
+        vae_model=test_model_vae_model_path,
+        ip_adapter_face_emb_extractor=ip_adapter_face_emb_extractor,
+        ip_adapter_face_image_proj=ip_adapter_face_image_proj,
     )
+
     logger.debug(f"load referencenet"),
 
     # TODO:这里修改为gradio
@@ -614,6 +610,7 @@ def online_t2v_inference(
     w,
     h,
     video_len,
+    img_edge_ratio: float = 1.0,
     progress=gr.Progress(track_tqdm=True),
 ):
     progress(0, desc="Starting...")
@@ -636,6 +633,7 @@ def online_t2v_inference(
         "ipadapter_image": image_path,
         "height": h,
         "width": w,
+        "img_length_ratio": img_edge_ratio,
         # 'style': 'anime',
         # 'sex': 'female'
     }
@@ -683,16 +681,15 @@ def online_t2v_inference(
         logger.debug(f"test_data_condition_images is None")
 
     # 当没有指定生成视频的宽高时，使用输入条件的宽高，优先使用 condition_image，低优使用 video
-    if test_data_height is None:
+    if test_data_height in [None, -1]:
         test_data_height = condition_image_height
 
-    if test_data_width is None:
+    if test_data_width in [None, -1]:
         test_data_width = condition_image_width
 
     test_data_img_length_ratio = float(
         test_data.get("img_length_ratio", img_length_ratio)
     )
-
     # 为了和video2video保持对齐，使用64而不是8作为宽、高最小粒度
     # test_data_height = int(test_data_height * test_data_img_length_ratio // 8 * 8)
     # test_data_width = int(test_data_width * test_data_img_length_ratio // 8 * 8)
@@ -832,7 +829,7 @@ def online_t2v_inference(
             test_data_video_negative_prompt
         )
     for i_num in range(n_repeat):
-        test_data_seed = random.randint(0, 1e8) if seed is None else seed
+        test_data_seed = random.randint(0, 1e8) if seed in [None, -1] else seed
         cpu_generator, gpu_generator = set_all_seed(int(test_data_seed))
         save_file_name = (
             f"m={model_name}_rm={referencenet_model_name}_case={test_data_name}"

@@ -14,4 +14,4 @@ echo "pythonpath" $PYTHONPATH
 source /opt/conda/etc/profile.d/conda.sh
 conda activate musev
 which python
-python app.py
+python ap_space.py
