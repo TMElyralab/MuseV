@@ -83,7 +83,7 @@ args_dict = {
     "ip_adapter_face_model_name": None,
     "ip_adapter_face_scale": 1.0,
     "ip_adapter_model_cfg_path": "../../configs/model/ip_adapter.py",
-    "ip_adapter_model_name": "musev_referencenet",
+    "ip_adapter_model_name": "musev_referencenet_pose",
     "ip_adapter_scale": 1.0,
     "ipadapter_image_path": None,
     "lcm_model_cfg_path": "../../configs/model/lcm_model.py",
@@ -96,8 +96,8 @@ args_dict = {
     "n_vision_condition": 1,
     "need_hist_match": False,
     "need_img_based_video_noise": True,
-    "need_return_condition": True,
-    "need_return_videos": True,
+    "need_return_condition": False,
+    "need_return_videos": False,
     "need_video2video": False,
     "negative_prompt": "V2",
     "negprompt_cfg_path": "../../configs/model/negative_prompt.py",
@@ -128,7 +128,7 @@ args_dict = {
     "test_data_path": "./configs/infer/testcase_video_famous.yaml",
     "time_size": 12,
     "unet_model_cfg_path": "../../configs/model/motion_model.py",
-    "unet_model_name": "musev_referencenet",
+    "unet_model_name": "musev_referencenet_pose",
     "use_condition_image": True,
     "vae_model_path": "../../checkpoints/vae/sd-vae-ft-mse",
     "video_guidance_scale": 3.5,
@@ -145,7 +145,7 @@ args_dict = {
     "w_ind_noise": 0.5,
     "which2video": "video_middle",
     "width": None,
-    "write_info": True,
+    "write_info": False,
 }
 args = argparse.Namespace(**args_dict)
 print("args")
@@ -653,6 +653,7 @@ def online_v2v_inference(
     w,
     h,
     video_length,
+    img_edge_ratio: float = 1.0,
     progress=gr.Progress(track_tqdm=True),
 ):
     progress(0, desc="Starting...")
@@ -675,6 +676,7 @@ def online_v2v_inference(
         "ipadapter_image": image_path,
         "height": h,
         "width": w,
+        "img_length_ratio": img_edge_ratio,
         # 'style': 'anime',
         # 'sex': 'female'
     }
@@ -736,21 +738,16 @@ def online_v2v_inference(
         logger.debug(f"test_data_condition_images is None")
 
     # 当没有指定生成视频的宽高时，使用输入条件的宽高，优先使用 condition_image，低优使用 video
-    if test_data_height is None:
-        test_data_height = (
-            condition_image_height
-            if condition_image_height is not None
-            else video_height
-        )
+    if test_data_height in [None, -1]:
+        test_data_height = condition_image_height
 
-    if test_data_width is None:
-        test_data_width = (
-            condition_image_width if condition_image_width is not None else video_width
-        )
+    if test_data_width in [None, -1]:
+        test_data_width = condition_image_width
 
     test_data_img_length_ratio = float(
         test_data.get("img_length_ratio", img_length_ratio)
     )
+
     test_data_height = int(test_data_height * test_data_img_length_ratio // 64 * 64)
     test_data_width = int(test_data_width * test_data_img_length_ratio // 64 * 64)
     pprint(test_data)
@@ -893,7 +890,7 @@ def online_v2v_inference(
     # video
     filename = os.path.basename(video_path).split(".")[0]
     for i_num in range(n_repeat):
-        test_data_seed = random.randint(0, 1e8) if seed is None else seed
+        test_data_seed = random.randint(0, 1e8) if seed in [None, -1] else seed
         cpu_generator, gpu_generator = set_all_seed(int(test_data_seed))
 
         save_file_name = (
