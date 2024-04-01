@@ -120,7 +120,7 @@ def parse_args():
         type=str,
         default=None,
         help="referencenet model name, None means do not use referencenet, default=`None`",
-        choices=["musev_referencenet"],
+        choices=["musev_referencenet", "musev_referencenet_pose"],
     )
     parser.add_argument(
         "--ip_adapter_model_cfg_path",
@@ -133,7 +133,7 @@ def parse_args():
         type=str,
         default=None,
         help="ip_adapter model name, None means do not use ip_adapter, default=`None`",
-        choices=["musev_referencenet"],
+        choices=["musev_referencenet", "musev_referencenet_pose"],
     )
     parser.add_argument(
         "--vision_clip_model_path",

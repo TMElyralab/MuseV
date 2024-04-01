@@ -1,3 +1,13 @@
+# - name: task_name
+#   condition_images: vision condition images path
+#   video_path: str, default null, used for video2video 
+#   prompt: text to guide image generation
+#   ipadapter_image: image_path for IP-Apdater
+#   refer_image: image_path for referencenet, generally speaking, same as ipadapter_image
+#   height: int # The shorter the image size, the larger the motion amplitude, and the lower video quality.
+#   width: int #  The longer the W&H, the smaller the motion amplitude, and the higher video quality.
+#   img_length_ratio: float, generation video size is (height, width) * img_length_ratio
+
 # text/image2video
 - condition_images: ./data/images/yongen.jpeg
   eye_blinks_factor: 1.8
@@ -171,8 +181,8 @@
   width: 736
 
 # video2video
-- name: "dacne1"
-  prompt: "(best quality), ((masterpiece)), (highres), illustration, original, extremely detailed wallpaper"
+- name: "dance1"
+  prompt: "(masterpiece, best quality, highres:1) , a girl is dancing, wearing a dress made of stars, animation"
   video_path:  ./data/source_video/video1_girl_poseseq.mp4 
   condition_images: ./data/images/spark_girl.png
   refer_image: ${.condition_images}
@@ -182,7 +192,7 @@
   img_length_ratio: 1.0
   video_is_middle: True # if true, means video_path is controlnet condition, not natural rgb video
 
-- name: "dacne2"
+- name: "dance2"
   prompt: "(best quality), ((masterpiece)), (highres), illustration, original, extremely detailed wallpaper"
   video_path:  ./data/source_video/video1_girl_poseseq.mp4 
   condition_images: ./data/images/cyber_girl.png

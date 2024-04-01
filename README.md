@@ -407,8 +407,9 @@ git clone https://huggingface.co/TMElyralab/MuseV ./checkpoints
         - `referencenet`: similar to `AnimateAnyone`
         - `ip_adapter_image_proj.bin`: images clip emb project layer, refer to `IPAdapter`
     - `musev_referencenet_pose`: based on `musev_referencenet`, fix `referencenet`and `controlnet_pose`, train `unet motion` and `IPAdapter`. `GPU memory consumption` $\approx 12G$
-- `t2i/sd1.5`: text2image model, parameter are frozen when training motion module.
-    - majicmixRealv6Fp16: example, could be replaced with other t2i base. download from [majicmixRealv6Fp16](https://civitai.com/models/43331/majicmix-realistic)
+- `t2i/sd1.5`: text2image model, parameter are frozen when training motion module. Different `t2i` base_model has a significant impact.
+    - `majicmixRealv6Fp16`: example, could be replaced with other t2i base. download from [majicmixRealv6Fp16](https://civitai.com/models/43331?modelVersionId=94640)
+    - `fantasticmix_v10`: example, could be replaced with other t2i base. download from [fantasticmix_v10](https://civitai.com/models/22402?modelVersionId=26744)
 - `IP-Adapter/models`: download from [IPAdapter](https://huggingface.co/h94/IP-Adapter/tree/main)
     - `image_encoder`: vision clip model.
     - `ip-adapter_sd15.bin`: original IPAdapter model checkpoint.
@@ -461,8 +462,9 @@ supports `referencenet`, `IPAdapter`, `IPAdapterFaceID`, `Facein`.
 
 
 #### video2video
+`t2i` base_model has a significant impact. In this case, `fantasticmix_v10` performs better than `majicmixRealv6Fp16`.
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas dacne1 --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name fantasticmix_v10  --unet_model_name musev_referencenet --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas dance1 --fps 12 --time_size 12
 ```
 **import parameters**
 
@@ -481,8 +483,11 @@ all controlnet_names refer to [mmcm](https://github.com/TMElyralab/MMCM/blob/mai
 ### musev_referencenet_pose
 Only used for `pose2video`
 train based on `musev_referencenet`, fix `referencenet`, `pose-controlnet`, and `T2I`, train `motion` module and `IPAdapter`.
+
+`t2i` base_model has a significant impact. In this case, `fantasticmix_v10` performs better than `majicmixRealv6Fp16`.
+
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev_referencenet_pose --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet_pose    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dacne1   --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name fantasticmix_v10  --unet_model_name musev_referencenet_pose --referencenet_model_name   musev_referencenet --ip_adapter_model_name musev_referencenet_pose    -test_data_path ./configs/tasks/example.yaml    --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder      --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dance1   --fps 12 --time_size 12
 ```
 
 ### musev
@@ -493,7 +498,7 @@ python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --
 ```
 #### video2video
 ```bash
-python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dacne1   --fps 12 --time_size 12
+python scripts/inference/video2video.py --sd_model_name fantasticmix_v10  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dance1   --fps 12 --time_size 12
 ```
 
 ### Gradio demo
