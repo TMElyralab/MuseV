@@ -4,12 +4,15 @@ import pdb
 
 import cuid
 import gradio as gr
-
+import spaces
+import numpy as np
 
 from huggingface_hub import snapshot_download
 
 ProjectDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 CheckpointsDir = os.path.join(ProjectDir, "checkpoints")
+
+
 
 
 def download_model():
@@ -32,13 +35,69 @@ download_model()  # for huggingface deployment.
 from gradio_video2video import online_v2v_inference
 from gradio_text2video import online_t2v_inference
 
+@spaces.GPU
+def hf_online_t2v_inference(
+    prompt,
+    image_np,
+    seed,
+    fps,
+    w,
+    h,
+    video_len,
+    img_edge_ratio,
+):
+    return online_t2v_inference(prompt,image_np,seed,fps,w,h,video_len,img_edge_ratio)
+
+@spaces.GPU
+def hg_online_v2v_inference(
+    prompt,
+    image_np,
+    video,
+    processor,
+    seed,
+    fps,
+    w,
+    h,
+    video_length,img_edge_ratio,
+):
+    return online_v2v_inference(prompt,image_np,video,processor,seed,fps,w,h,video_length,img_edge_ratio)
+
 
 def update_shape(image):
-    if image != None:
+    if isinstance(image, np.ndarray):
         h, w, _ = image.shape
     else:
         h, w = 768, 512
-    return w, h
+    return w, h,w,h
+
+def limit_shape(image,input_w,input_h,img_edge_ratio):
+    
+    if isinstance(image, np.ndarray):
+        h, w, _ = image.shape
+    else:
+        h, w = -1, -1
+    if input_h!=-1:
+        h=input_h
+    if input_w!=-1:
+        w=input_w
+        
+    h=img_edge_ratio*h
+    w=img_edge_ratio*w
+
+    max_dim = 960
+    if w > max_dim or h > max_dim:
+        scale_ratio = min(max_dim / w, max_dim / h)
+        new_w = int(w * scale_ratio)
+        new_h = int(h * scale_ratio)
+    else:
+        new_w=w
+        new_h=h
+    return new_w, new_h
+
+def limit_length(length):
+    if length>24*6:
+        length=24*6
+    return length
 
 
 class ConcatenateBlock(gr.blocks.Block):
@@ -121,37 +180,45 @@ with gr.Blocks(css=css) as demo:
             with gr.Column():
                 prompt = gr.Textbox(label="Prompt")
                 image = gr.Image(label="VisionCondImage")
-                gr.Markdown("seed=-1 means that the seeds run each time are different")
-                seed = gr.Number(label="Seed", value=-1)
-                video_length = gr.Number(label="Video Length", value=12)
+                seed = gr.Number(label="Seed (seed=-1 means that the seeds run each time are different)", value=-1)
+                video_length = gr.Number(label="Video Length(need smaller than 144,If you want to be able to generate longer videos, run it locally )", value=12)
                 fps = gr.Number(label="Generate Video FPS", value=6)
                 gr.Markdown(
                     (
                         "If W&H is -1, then use the Reference Image's Size. Size of target video is $(W, H)*img\_edge\_ratio$. \n"
                         "The shorter the image size, the larger the motion amplitude, and the lower video quality.\n"
-                        "The longer the W&H, the smaller the motion amplitude, and the higher video quality"
+                        "The longer the W&H, the smaller the motion amplitude, and the higher video quality.\n"
+                        "Due to the GPU VRAM limits, the W&H need smaller than 960px"
                     )
                 )
                 with gr.Row():
                     w = gr.Number(label="Width", value=-1)
                     h = gr.Number(label="Height", value=-1)
                     img_edge_ratio = gr.Number(label="img_edge_ratio", value=1.0)
-
+                with gr.Row():
+                    final_w = gr.Number(label="Generate Width", value=-1)
+                    final_h = gr.Number(label="Generate Height", value=-1)
                 btn1 = gr.Button("Generate")
             out = gr.outputs.Video()
             # pdb.set_trace()
-        with gr.Row():
-            board = gr.Dataframe(
-                value=[["", "", ""]] * 3,
-                interactive=False,
-                type="array",
-                label="Demo Video",
-            )
+        # with gr.Row():
+        #     board = gr.Dataframe(
+        #         value=[["", "", ""]] * 3,
+        #         interactive=False,
+        #         type="array",
+        #         label="Demo Video",
+        #     )
 
-        # image.change(fn=update_shape, inputs=[image], outputs=[w, h])
+        image.change(fn=update_shape, inputs=[image], outputs=[w, h,final_w,final_h])
+
+        w.change(fn=limit_shape,inputs=[image,w,h,img_edge_ratio],outputs=[final_w,final_h])
+        h.change(fn=limit_shape,inputs=[image,w,h,img_edge_ratio],outputs=[final_w,final_h])
+        img_edge_ratio.change(fn=limit_shape,inputs=[image,w,h,img_edge_ratio],outputs=[final_w,final_h])
+        
+        video_length.change(fn=limit_length,inputs=[video_length],outputs=[video_length])
 
         btn1.click(
-            fn=online_t2v_inference,
+            fn=hf_online_t2v_inference,
             inputs=[prompt, image, seed, fps, w, h, video_length, img_edge_ratio],
             outputs=out,
         )
@@ -176,27 +243,34 @@ with gr.Blocks(css=css) as demo:
                     value="dwpose_body_hand",
                 )
                 gr.Markdown("seed=-1 means that seeds are different in every run")
-                seed = gr.Number(label="Seed", value=-1)
+                seed = gr.Number(label="Seed (seed=-1 means that the seeds run each time are different)", value=-1)
                 video_length = gr.Number(label="Video Length", value=12)
                 fps = gr.Number(label="Generate Video FPS", value=6)
                 gr.Markdown(
                     (
                         "If W&H is -1, then use the Reference Image's Size. Size of target video is $(W, H)*img\_edge\_ratio$. \n"
-                        "The shorter the image size, the larger the motion amplitude, and the lower video quality. \n"
-                        "The longer the W&H, the smaller the motion amplitude, and the higher video quality. "
+                        "The shorter the image size, the larger the motion amplitude, and the lower video quality.\n"
+                        "The longer the W&H, the smaller the motion amplitude, and the higher video quality.\n"
+                        "Due to the GPU VRAM limits, the W&H need smaller than 2000px"
                     )
                 )
                 with gr.Row():
                     w = gr.Number(label="Width", value=-1)
                     h = gr.Number(label="Height", value=-1)
                     img_edge_ratio = gr.Number(label="img_edge_ratio", value=1.0)
-
+                with gr.Row():
+                    final_w = gr.Number(label="Generate Width", value=-1)
+                    final_h = gr.Number(label="Generate Height", value=-1)
                 btn2 = gr.Button("Generate")
             out1 = gr.outputs.Video()
-        # image.change(fn=update_shape, inputs=[image], outputs=[w, h])
-
+        image.change(fn=update_shape, inputs=[image], outputs=[w, h])
+        final_w.change(fn=limit_shape,inputs=[image,img_edge_ratio],outputs=[final_w,final_h])
+        final_h.change(fn=limit_shape,inputs=[image,img_edge_ratio],outputs=[final_w,final_h])
+        
+        video_length.change(fn=limit_length,inputs=[video_length],outputs=[video_length])
+        
         btn2.click(
-            fn=online_v2v_inference,
+            fn=hg_online_v2v_inference,
             inputs=[
                 prompt,
                 image,
