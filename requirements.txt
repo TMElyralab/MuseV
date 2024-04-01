@@ -1,6 +1,6 @@
 
-tensorflow==2.12.0
-tensorboard==2.12.0
+# tensorflow==2.12.0
+# tensorboard==2.12.0
 
 # torch==2.0.1+cu118
 # torchvision==0.15.2+cu118 
@@ -50,7 +50,7 @@ requests
 scipy
 six
 tqdm
-gradio==3.43.2
+gradio
 albumentations==1.3.1
 opencv-contrib-python==4.8.0.76
 imageio-ffmpeg==0.4.8
@@ -88,5 +88,10 @@ IProgress==0.4
 markupsafe==2.0.1
 xlsxwriter
 cuid
+spaces
+git+https://github.com/TMElyralab/diffusers.git@main
+git+https://github.com/TMElyralab/MMCM.git@main
+git+https://github.com/TMElyralab/controlnet_aux.git@tme
+
 git+https://github.com/tencent-ailab/IP-Adapter.git@main
 git+https://github.com/openai/CLIP.git@main
