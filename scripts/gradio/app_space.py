@@ -35,7 +35,7 @@ download_model()  # for huggingface deployment.
 from gradio_video2video import online_v2v_inference
 from gradio_text2video import online_t2v_inference
 
-@spaces.GPU
+@spaces.GPU(duration=180)
 def hf_online_t2v_inference(
     prompt,
     image_np,
@@ -48,7 +48,8 @@ def hf_online_t2v_inference(
 ):
     return online_t2v_inference(prompt,image_np,seed,fps,w,h,video_len,img_edge_ratio)
 
-@spaces.GPU
+@spaces.GPU(duration=180)
+
 def hg_online_v2v_inference(
     prompt,
     image_np,
