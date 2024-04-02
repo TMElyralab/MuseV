@@ -19,7 +19,7 @@ Wenjiang Zhou
 We have setup **the world simulator vision since March 2023, believing diffusion models can simulate the world**. `MuseV` was a milestone achieved around **July 2023**. Amazed by the progress of Sora, we decided to opensource `MuseV`, hopefully it will benefit the community. Next we will move on to the promising diffusion+transformer scheme.
 
 
-Update: We haved released <a href="https://github.com/TMElyralab/MuseTalk" style="font-size:24px; color:red;">MuseTalk</a>, a real-time high quality lip sync model, which can be applied with MuseV as a complete virtual human generation solution. Please stay tuned! 
+Update: We have released <a href="https://github.com/TMElyralab/MuseTalk" style="font-size:24px; color:red;">MuseTalk</a>, a real-time high quality lip sync model, which can be applied with MuseV as a complete virtual human generation solution.
 
 # Overview
 `MuseV` is a diffusion-based virtual human video generation framework, which 
