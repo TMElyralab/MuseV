@@ -452,6 +452,43 @@ class DiffusersPipelinePredictor(object):
         2. when input paramter is None, use text2video to generate vis cond image, and use as refer_image and ip_adapter_image too.
         3. given from input paramter, but still redraw, update with redrawn vis cond image.
         """
+        # crop resize images
+        if condition_images is not None:
+            logger.debug(
+                f"center crop resize condition_images={condition_images.shape}, to height={height}, width={width}"
+            )
+            condition_images = batch_dynamic_crop_resize_images_v2(
+                condition_images,
+                target_height=height,
+                target_width=width,
+            )
+        if refer_image is not None:
+            logger.debug(
+                f"center crop resize refer_image to height={height}, width={width}"
+            )
+            refer_image = batch_dynamic_crop_resize_images_v2(
+                refer_image,
+                target_height=height,
+                target_width=width,
+            )
+        if ip_adapter_image is not None:
+            logger.debug(
+                f"center crop resize ip_adapter_image to height={height}, width={width}"
+            )
+            ip_adapter_image = batch_dynamic_crop_resize_images_v2(
+                ip_adapter_image,
+                target_height=height,
+                target_width=width,
+            )
+        if refer_face_image is not None:
+            logger.debug(
+                f"center crop resize refer_face_image to height={height}, width={width}"
+            )
+            refer_face_image = batch_dynamic_crop_resize_images_v2(
+                refer_face_image,
+                target_height=height,
+                target_width=width,
+            )
         run_video_length = video_length
         # generate vision condition frame start
         # if condition_images is None, generate with refer_image, ip_adapter_image
