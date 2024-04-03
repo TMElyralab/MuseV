@@ -50,7 +50,7 @@ requests
 scipy
 six
 tqdm
-gradio
+gradio==4.12
 albumentations==1.3.1
 opencv-contrib-python==4.8.0.76
 imageio-ffmpeg==0.4.8
