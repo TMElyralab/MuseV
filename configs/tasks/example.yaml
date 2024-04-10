@@ -15,8 +15,7 @@
   img_length_ratio: 0.957
   ipadapter_image: ${.condition_images}
   name: yongen
-  prompt: (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
+  prompt: (masterpiece, best quality, highres:1),(1boy, solo:1),(eye blinks:1.8),(head wave:1.3)
   refer_image: ${.condition_images}
   video_path: null
   width: 736
@@ -97,8 +96,7 @@
   img_length_ratio: 1.495
   ipadapter_image: ${.condition_images}
   name: dufu
-  prompt: (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
+  prompt: (masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3),Chinese ink painting style
   refer_image: ${.condition_images}
   video_path: null
   width: 471
@@ -119,8 +117,7 @@
   img_length_ratio: 0.88
   ipadapter_image: ${.condition_images}
   name: Portrait-of-Dr.-Gachet
-  prompt: (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
+  prompt: (masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3)
   refer_image: ${.condition_images}
   video_path: null
   width: 800
@@ -130,8 +127,7 @@
   img_length_ratio: 1.246
   ipadapter_image: ${.condition_images}
   name: Self-Portrait-with-Cropped-Hair
-  prompt: (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
+  prompt: (masterpiece, best quality, highres:1),(1boy, solo:1),(eye blinks:1.8),(head wave:1.3), animate
   refer_image: ${.condition_images}
   video_path: null
   width: 848
@@ -141,8 +137,7 @@
   img_length_ratio: 0.587
   ipadapter_image: ${.condition_images}
   name: The-Laughing-Cavalier
-  prompt: (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
+  prompt: (masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3)
   refer_image: ${.condition_images}
   video_path: null
   width: 1200

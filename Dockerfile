@@ -14,6 +14,5 @@ RUN . /opt/conda/etc/profile.d/conda.sh  \
     && echo "source activate musev" >> ~/.bashrc \
     && conda activate musev \
     && conda env list \
-    && pip install cuid
-
+    && pip --no-cache-dir install cuid gradio==4.12 spaces
 USER root

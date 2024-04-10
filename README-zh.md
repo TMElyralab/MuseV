@@ -65,8 +65,7 @@ Wenjiang Zhou
     <td >
      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/732cf1fd-25e7-494e-b462-969c9425d277" width="100" controls preload></video>
     </td>
-    <td>(masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
+    <td>(masterpiece, best quality, highres:1),(1boy, solo:1),(eye blinks:1.8),(head wave:1.3)
     </td>
   </tr>
 
@@ -159,8 +158,7 @@ Wenjiang Zhou
       <video src="https://github.com/TMElyralab/MuseV/assets/163980830/28294baa-b996-420f-b1fb-046542adf87d" width="100" controls preload></video>
     </td>
     <td>
-    (masterpiece, best quality, highres:1),(1man, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
+    (masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3),Chinese ink painting style
     </td>
   </tr>
 
@@ -184,8 +182,7 @@ Wenjiang Zhou
       <video src="https://github.com/TMElyralab/MuseV/assets/163980830/4072410a-ecea-4ee5-a9b4-735f9f462d51" width="100" controls preload></video>
     </td>
     <td>
-  (masterpiece, best quality, highres:1),(1man, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
+  (masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3)
     </td>
   </tr>
   <tr>
@@ -196,8 +193,7 @@ Wenjiang Zhou
       <video src="https://github.com/TMElyralab/MuseV/assets/163980830/5148beda-a1e1-44f0-ad84-2fb99ad73a11" width="100" controls preload></video>
     </td>
     <td>
-  (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
+  (masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3), animate
     </td>
   </tr>
   <tr>
@@ -283,7 +279,7 @@ Wenjiang Zhou
         <video src="https://github.com/TMElyralab/MuseV/assets/163980830/484cc69d-c316-4464-a55b-3df929780a8e" width="400" controls preload></video>
     </td>
     <td>
-      (masterpiece, best quality, highres:1)
+      (masterpiece, best quality, highres:1) , a girl is dancing, animation
     </td>
   </tr>
   <tr>   
@@ -294,7 +290,7 @@ Wenjiang Zhou
       <video src="https://github.com/TMElyralab/MuseV/assets/163980830/c44682e6-aafc-4730-8fc1-72825c1bacf2" width="400" controls preload></video>
     </td>
     <td>
-      (masterpiece, best quality, highres:1)
+      (masterpiece, best quality, highres:1), is dancing, animation
     </td>
   </tr>
 </table >
@@ -374,7 +370,7 @@ pip install -r requirements.txt
 #### 准备 [openmmlab](https://openmmlab.com/) 包
 如果不使用 Docker方式，还需要额外安装 mmlab 包。
 ```bash
-pip install--no-cache-dir -U openmim 
+pip install --no-cache-dir -U openmim 
 mim install mmengine 
 mim install "mmcv>=2.0.1" 
 mim install "mmdet>=3.1.0" 
