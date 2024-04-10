@@ -45,10 +45,8 @@ from musev.models.unet_loader import load_unet_by_name
 from musev.utils.util import save_videos_grid_with_opencv
 from musev import logger
 
-need_load_predictor = False
-if need_load_predictor:
-    video_sd_predictor = None
-else:
+use_v2v_predictor = False
+if use_v2v_predictor:
     from gradio_video2video import sd_predictor as video_sd_predictor
 
 logger.setLevel("INFO")
@@ -464,7 +462,7 @@ def read_image_and_name(path):
     return images, name
 
 
-if referencenet_model_name is not None and need_load_predictor:
+if referencenet_model_name is not None and not use_v2v_predictor:
     referencenet = load_referencenet_by_name(
         model_name=referencenet_model_name,
         # sd_model=sd_model_path,
@@ -476,7 +474,7 @@ else:
     referencenet = None
     referencenet_model_name = "no"
 
-if vision_clip_extractor_class_name is not None and need_load_predictor:
+if vision_clip_extractor_class_name is not None and not use_v2v_predictor:
     vision_clip_extractor = load_vision_clip_encoder_by_name(
         ip_image_encoder=vision_clip_model_path,
         vision_clip_extractor_class_name=vision_clip_extractor_class_name,
@@ -488,7 +486,7 @@ else:
     vision_clip_extractor = None
     logger.info(f"vision_clip_extractor, None")
 
-if ip_adapter_model_name is not None and need_load_predictor:
+if ip_adapter_model_name is not None and not use_v2v_predictor:
     ip_adapter_image_proj = load_ip_adapter_image_proj_by_name(
         model_name=ip_adapter_model_name,
         ip_image_encoder=ip_adapter_model_params_dict.get(
@@ -526,11 +524,11 @@ for model_name, sd_model_params in sd_model_params_dict.items():
             strict=not (facein_model_name is not None),
             need_t2i_ip_adapter_face=ip_adapter_face_model_name is not None,
         )
-        if need_load_predictor
+        if not use_v2v_predictor
         else None
     )
 
-    if facein_model_name is not None and need_load_predictor:
+    if facein_model_name is not None and not use_v2v_predictor:
         (
             face_emb_extractor,
             facein_image_proj,
@@ -552,7 +550,7 @@ for model_name, sd_model_params in sd_model_params_dict.items():
         face_emb_extractor = None
         facein_image_proj = None
 
-    if ip_adapter_face_model_name is not None and need_load_predictor:
+    if ip_adapter_face_model_name is not None and not use_v2v_predictor:
         (
             ip_adapter_face_emb_extractor,
             ip_adapter_face_image_proj,
@@ -595,10 +593,10 @@ for model_name, sd_model_params in sd_model_params_dict.items():
             ip_adapter_face_emb_extractor=ip_adapter_face_emb_extractor,
             ip_adapter_face_image_proj=ip_adapter_face_image_proj,
         )
-        if need_load_predictor
+        if not use_v2v_predictor
         else video_sd_predictor
     )
-    if not need_load_predictor:
+    if use_v2v_predictor:
         print(
             "text2video use video_sd_predictor, sd_predictor type is ",
             type(sd_predictor),

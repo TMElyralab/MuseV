@@ -6,11 +6,46 @@ import cuid
 import gradio as gr
 import spaces
 import numpy as np
+import sys
 
 from huggingface_hub import snapshot_download
+import subprocess
 
-ProjectDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+
+ProjectDir = os.path.abspath(os.path.dirname(__file__))
 CheckpointsDir = os.path.join(ProjectDir, "checkpoints")
+
+sys.path.insert(0, ProjectDir)
+sys.path.insert(0, f"{ProjectDir}/MMCM")
+sys.path.insert(0, f"{ProjectDir}/diffusers/src")
+sys.path.insert(0, f"{ProjectDir}/controlnet_aux/src")
+sys.path.insert(0, f"{ProjectDir}/scripts/gradio")
+
+result = subprocess.run(
+    ["pip", "install", "--no-cache-dir", "-U", "openmim"],
+    capture_output=True,
+    text=True,
+)
+print(result)
+
+result = subprocess.run(["mim", "install", "mmengine"], capture_output=True, text=True)
+print(result)
+
+result = subprocess.run(
+    ["mim", "install", "mmcv>=2.0.1"], capture_output=True, text=True
+)
+print(result)
+
+result = subprocess.run(
+    ["mim", "install", "mmdet>=3.1.0"], capture_output=True, text=True
+)
+print(result)
+
+result = subprocess.run(
+    ["mim", "install", "mmpose>=1.1.0"], capture_output=True, text=True
+)
+print(result)
+ignore_video2video = True
 
 
 def download_model():
@@ -21,6 +56,7 @@ def download_model():
             repo_id="TMElyralab/MuseV",
             local_dir=CheckpointsDir,
             max_workers=8,
+            local_dir_use_symlinks=True,
         )
         toc = time.time()
         print(f"download cost {toc-tic} seconds")
@@ -29,8 +65,8 @@ def download_model():
 
 
 download_model()  # for huggingface deployment.
-
-from gradio_video2video import online_v2v_inference
+if not ignore_video2video:
+    from gradio_video2video import online_v2v_inference
 from gradio_text2video import online_t2v_inference
 
 
@@ -45,8 +81,8 @@ def hf_online_t2v_inference(
     video_len,
     img_edge_ratio,
 ):
-    if not isinstance(image_np, np.ndarray):#None
-        raise   gr.Error("Need input reference image")
+    if not isinstance(image_np, np.ndarray):  # None
+        raise gr.Error("Need input reference image")
     return online_t2v_inference(
         prompt, image_np, seed, fps, w, h, video_len, img_edge_ratio
     )
@@ -65,8 +101,8 @@ def hg_online_v2v_inference(
     video_length,
     img_edge_ratio,
 ):
-    if not isinstance(image_np, np.ndarray):#None
-        raise   gr.Error("Need input reference image")
+    if not isinstance(image_np, np.ndarray):  # None
+        raise gr.Error("Need input reference image")
     return online_v2v_inference(
         prompt,
         image_np,
@@ -81,21 +117,13 @@ def hg_online_v2v_inference(
     )
 
 
-def update_shape(image):
-    if isinstance(image, np.ndarray):
-        h, w, _ = image.shape
-    else:
-        h, w = 768, 512
-    return w, h, w, h
-
-
 def limit_shape(image, input_w, input_h, img_edge_ratio, max_image_edge=960):
     """limite generation video shape to avoid gpu memory overflow"""
     if isinstance(image, np.ndarray) and (input_h == -1 and input_w == -1):
         input_h, input_w, _ = image.shape
     h, w, _ = image.shape
-    if img_edge_ratio==0:
-        img_edge_ratio=1
+    if img_edge_ratio == 0:
+        img_edge_ratio = 1
     img_edge_ratio_infact = min(max_image_edge / max(input_h, input_w), img_edge_ratio)
     # print(
     #     image.shape,
@@ -105,17 +133,21 @@ def limit_shape(image, input_w, input_h, img_edge_ratio, max_image_edge=960):
     #     max_image_edge,
     #     img_edge_ratio_infact,
     # )
-    if img_edge_ratio!=1:
-        return img_edge_ratio_infact,input_w*img_edge_ratio_infact,input_h*img_edge_ratio_infact
+    if img_edge_ratio != 1:
+        return (
+            img_edge_ratio_infact,
+            input_w * img_edge_ratio_infact,
+            input_h * img_edge_ratio_infact,
+        )
     else:
-        return img_edge_ratio_infact,-1,-1
+        return img_edge_ratio_infact, -1, -1
 
 
 def limit_length(length):
     """limite generation video frames numer to avoid gpu memory overflow"""
 
     if length > 24 * 6:
-        gr.Warning('Length need to smaller than 144')
+        gr.Warning("Length need to smaller than 144, dute to gpu memory limit")
         length = 24 * 6
     return length
 
@@ -222,29 +254,38 @@ with gr.Blocks(css=css) as demo:
                     h = gr.Number(label="Height", value=-1)
                     img_edge_ratio = gr.Number(label="img_edge_ratio", value=1.0)
                 with gr.Row():
-                    out_w = gr.Number(label="Output Width", value=0,interactive=False)
-                    out_h = gr.Number(label="Output Height", value=0,interactive=False)
+                    out_w = gr.Number(label="Output Width", value=0, interactive=False)
+                    out_h = gr.Number(label="Output Height", value=0, interactive=False)
                     img_edge_ratio_infact = gr.Number(
-                        label="img_edge_ratio in fact", value=1.0,interactive=False,
+                        label="img_edge_ratio in fact",
+                        value=1.0,
+                        interactive=False,
                     )
                 btn1 = gr.Button("Generate")
             out = gr.Video()
             # pdb.set_trace()
-        i2v_examples_256=[
-            ['(masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face, soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)','../../data/images/yongen.jpeg',],
-            ['(masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)','../../data/images/The-Laughing-Cavalier.jpg'],
+        i2v_examples_256 = [
+            [
+                "(masterpiece, best quality, highres:1),(1boy, solo:1),(eye blinks:1.8),(head wave:1.3)",
+                "../../data/images/yongen.jpeg",
+            ],
+            [
+                "(masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3)",
+                "../../data/images/The-Laughing-Cavalier.jpg",
+            ],
         ]
         with gr.Row():
-            gr.Examples(examples=i2v_examples_256,
-                        inputs=[prompt,image],
-                        outputs=[out],
-                        fn = hf_online_t2v_inference,
-                        cache_examples=False,
+            gr.Examples(
+                examples=i2v_examples_256,
+                inputs=[prompt, image],
+                outputs=[out],
+                fn=hf_online_t2v_inference,
+                cache_examples=False,
             )
         img_edge_ratio.change(
             fn=limit_shape,
             inputs=[image, w, h, img_edge_ratio],
-            outputs=[img_edge_ratio_infact,out_w,out_h],
+            outputs=[img_edge_ratio_infact, out_w, out_h],
         )
 
         video_length.change(
@@ -267,87 +308,102 @@ with gr.Blocks(css=css) as demo:
         )
 
     with gr.Tab("Video to Video"):
-        with gr.Row():
-            with gr.Column():
-                prompt = gr.Textbox(label="Prompt")
-                gr.Markdown(
-                    (
-                        "pose of VisionCondImage should be same as of the first frame of the video. "
-                        "its better generate target first frame whose pose is same as of first frame of the video with text2image tool, sch as MJ, SDXL."
-                    )
+        if ignore_video2video:
+            gr.Markdown(
+                (
+                    "Due to GPU limit, MuseVDemo now only support Text2Video. If you want to try Video2Video, please run it locally. \n"
+                    "We are trying to support video2video in the future. Thanks for your understanding."
                 )
-                image = gr.Image(label="VisionCondImage")
-                video = gr.Video(label="ReferVideo")
-                # radio = gr.inputs.Radio(, label="Select an option")
-                # ctr_button = gr.inputs.Button(label="Add ControlNet List")
-                # output_text = gr.outputs.Textbox()
-                processor = gr.Textbox(
-                    label=f"Control Condition. gradio code now only support dwpose_body_hand, use command can support multi of {control_options}",
-                    value="dwpose_body_hand",
-                )
-                gr.Markdown("seed=-1 means that seeds are different in every run")
-                seed = gr.Number(
-                    label="Seed (seed=-1 means that the seeds run each time are different)",
-                    value=-1,
-                )
-                video_length = gr.Number(label="Video Length", value=12)
-                fps = gr.Number(label="Generate Video FPS", value=6)
-                gr.Markdown(
-                    (
-                        "If W&H is -1, then use the Reference Image's Size. Size of target video is $(W, H)*img\_edge\_ratio$. \n"
-                        "The shorter the image size, the larger the motion amplitude, and the lower video quality.\n"
-                        "The longer the W&H, the smaller the motion amplitude, and the higher video quality.\n"
-                        "Due to the GPU VRAM limits, the W&H need smaller than 2000px"
-                    )
-                )
-                with gr.Row():
-                    w = gr.Number(label="Width", value=-1)
-                    h = gr.Number(label="Height", value=-1)
-                    img_edge_ratio = gr.Number(label="img_edge_ratio", value=1.0)
-
-                with gr.Row():
-                    out_w = gr.Number(label="Width", value=0,interactive=False)
-                    out_h = gr.Number(label="Height", value=0,interactive=False)
-                    img_edge_ratio_infact = gr.Number(
-                        label="img_edge_ratio in fact", value=1.0,interactive=False,
-                    )
-                btn2 = gr.Button("Generate")
-            out1 = gr.Video()
-        
-        v2v_examples_256=[
-            ['(masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face, soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)','../../data/demo/cyber_girl.png','../../data/demo/video1.mp4',],
-        ]
-        with gr.Row():
-            gr.Examples(examples=v2v_examples_256,
-                        inputs=[prompt,image,video],
-                        outputs=[out],
-                        fn = hg_online_v2v_inference,
-                        cache_examples=False,
             )
-        img_edge_ratio.change(
-            fn=limit_shape,
-            inputs=[image, w, h, img_edge_ratio],
-            outputs=[img_edge_ratio_infact,out_w,out_h],
-        )
-        video_length.change(
-            fn=limit_length, inputs=[video_length], outputs=[video_length]
-        )
-        btn2.click(
-            fn=hg_online_v2v_inference,
-            inputs=[
-                prompt,
-                image,
-                video,
-                processor,
-                seed,
-                fps,
-                w,
-                h,
-                video_length,
-                img_edge_ratio_infact,
-            ],
-            outputs=out1,
-        )
+        else:
+            with gr.Row():
+                with gr.Column():
+                    prompt = gr.Textbox(label="Prompt")
+                    gr.Markdown(
+                        (
+                            "pose of VisionCondImage should be same as of the first frame of the video. "
+                            "its better generate target first frame whose pose is same as of first frame of the video with text2image tool, sch as MJ, SDXL."
+                        )
+                    )
+                    image = gr.Image(label="VisionCondImage")
+                    video = gr.Video(label="ReferVideo")
+                    # radio = gr.inputs.Radio(, label="Select an option")
+                    # ctr_button = gr.inputs.Button(label="Add ControlNet List")
+                    # output_text = gr.outputs.Textbox()
+                    processor = gr.Textbox(
+                        label=f"Control Condition. gradio code now only support dwpose_body_hand, use command can support multi of {control_options}",
+                        value="dwpose_body_hand",
+                    )
+                    gr.Markdown("seed=-1 means that seeds are different in every run")
+                    seed = gr.Number(
+                        label="Seed (seed=-1 means that the seeds run each time are different)",
+                        value=-1,
+                    )
+                    video_length = gr.Number(label="Video Length", value=12)
+                    fps = gr.Number(label="Generate Video FPS", value=6)
+                    gr.Markdown(
+                        (
+                            "If W&H is -1, then use the Reference Image's Size. Size of target video is $(W, H)*img\_edge\_ratio$. \n"
+                            "The shorter the image size, the larger the motion amplitude, and the lower video quality.\n"
+                            "The longer the W&H, the smaller the motion amplitude, and the higher video quality.\n"
+                            "Due to the GPU VRAM limits, the W&H need smaller than 2000px"
+                        )
+                    )
+                    with gr.Row():
+                        w = gr.Number(label="Width", value=-1)
+                        h = gr.Number(label="Height", value=-1)
+                        img_edge_ratio = gr.Number(label="img_edge_ratio", value=1.0)
+
+                    with gr.Row():
+                        out_w = gr.Number(label="Width", value=0, interactive=False)
+                        out_h = gr.Number(label="Height", value=0, interactive=False)
+                        img_edge_ratio_infact = gr.Number(
+                            label="img_edge_ratio in fact",
+                            value=1.0,
+                            interactive=False,
+                        )
+                    btn2 = gr.Button("Generate")
+                out1 = gr.Video()
+
+            v2v_examples_256 = [
+                [
+                    "(masterpiece, best quality, highres:1), harley quinn is dancing, animation, by joshua klein",
+                    "../../data/demo/cyber_girl.png",
+                    "../../data/demo/video1.mp4",
+                ],
+            ]
+            with gr.Row():
+                gr.Examples(
+                    examples=v2v_examples_256,
+                    inputs=[prompt, image, video],
+                    outputs=[out],
+                    fn=hg_online_v2v_inference,
+                    cache_examples=False,
+                )
+            img_edge_ratio.change(
+                fn=limit_shape,
+                inputs=[image, w, h, img_edge_ratio],
+                outputs=[img_edge_ratio_infact, out_w, out_h],
+            )
+            video_length.change(
+                fn=limit_length, inputs=[video_length], outputs=[video_length]
+            )
+            btn2.click(
+                fn=hg_online_v2v_inference,
+                inputs=[
+                    prompt,
+                    image,
+                    video,
+                    processor,
+                    seed,
+                    fps,
+                    w,
+                    h,
+                    video_length,
+                    img_edge_ratio_infact,
+                ],
+                outputs=out1,
+            )
 
 
 # Set the IP and port
@@ -356,5 +412,5 @@ port_number = 7860  # Replace with your desired port number
 
 
 demo.queue().launch(
-    share=True , debug=True, server_name=ip_address, server_port=port_number
+    share=True, debug=True, server_name=ip_address, server_port=port_number
 )
