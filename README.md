@@ -13,7 +13,7 @@ Wenjiang Zhou
 (<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author, benbinwu@tencent.com)
 </font>
 
-**[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**  **[HuggingfaceSpace](https://huggingface.co/spaces/AnchorFake/MuseVDemo)**  **[project](comming soon)**    **Technical report (comming soon)**
+**[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**  **[HuggingfaceSpace](https://huggingface.co/spaces/AnchorFake/MuseVDemo)**  **[project](https://tmelyralab.github.io/)**    **Technical report (comming soon)**
 
 
 We have setup **the world simulator vision since March 2023, believing diffusion models can simulate the world**. `MuseV` was a milestone achieved around **July 2023**. Amazed by the progress of Sora, we decided to opensource `MuseV`, hopefully it will benefit the community. Next we will move on to the promising diffusion+transformer scheme.
@@ -47,6 +47,8 @@ Update: We have released <a href="https://github.com/TMElyralab/MuseTalk" style=
 All frames were generated directly from text2video model, without any post process.
 <!-- # TODO: // use youtu video link? -->
 Examples bellow can be accessed at `configs/tasks/example.yaml`
+MoreCase is in **[project](https://tmelyralab.github.io/)** 
+
 ### Text/Image2Video
 
 #### Human
