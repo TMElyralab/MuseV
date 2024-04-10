@@ -1364,6 +1364,8 @@ class MusevControlNetPipeline(
         facein_scale: float = 1.0,
         ip_adapter_face_scale: float = 1.0,
         ip_adapter_face_image: Optional[Tuple[torch.Tensor, np.array]] = None,
+        audio_emb: Optional[torch.Tensor] = None,
+        ip_adapter_audio_scale: float = 1.0,
         prompt_only_use_image_prompt: bool = False,
         # serial_denoise parameter start
         record_mid_video_noises: bool = False,
@@ -1373,7 +1375,6 @@ class MusevControlNetPipeline(
         video_overlap: int = 1,
         # serial_denoise parameter end
         # parallel_denoise parameter start
-        # refer to https://github.com/MooreThreads/Moore-AnimateAnyone/blob/master/src/pipelines/pipeline_pose2vid_long.py#L354
         context_schedule="uniform",
         context_frames=12,
         context_stride=1,
@@ -1381,21 +1382,16 @@ class MusevControlNetPipeline(
         context_batch_size=1,
         interpolation_factor=1,
         # parallel_denoise parameter end
+        decoder_t_segment: int = 200,
     ):
         r"""
         旨在兼容text2video、text2image、img2img、video2video、是否有controlnet等的通用pipeline。目前仅不支持img2img、video2video。
         支持多片段同时denoise，交叉部分加权平均
 
-        当 skip_temporal_layer 为 False 时, unet 起 video 生成作用；skip_temporal_layer为True时，unet起原image作用。
+        当 skip_temporal_layer为False时，unet起video生成作用；skip_temporal_layer为True时，unet起原image作用。
         当controlnet的所有入参为None，等价于走的是text2video pipeline；
         当 condition_latents、controlnet_condition_images、controlnet_condition_latents为None时，表示不走首帧条件生成的时序condition pipeline
-        现在没有考虑对 `num_videos_per_prompt` 的兼容性，不是1可能报错；
-
-        if skip_temporal_layer is False, unet motion layer works, else unet only run text2image layers.
-        if parameters about controlnet are None, means text2video pipeline;
-        if ondition_latents、controlnet_condition_images、controlnet_condition_latents are None, means only run text2video without vision condition images.
-        By now, code works well with `num_videos_per_prpmpt=1`, !=1 may be wrong.
-
+        现在没有考虑对num_videos_per_prompt的兼容性，不是1可能报错；
         Args:
             prompt (`str` or `List[str]`, *optional*):
                 The prompt or prompts to guide the image generation. If not defined, one has to pass `prompt_embeds`.
@@ -1408,18 +1404,10 @@ class MusevControlNetPipeline(
                 height and/or width are passed, `image` is resized according to them. If multiple ControlNets are
                 specified in init, images must be passed as a list such that each element of the list can be correctly
                 batched for input to a single controlnet.
-            condition_latents：
-                与latents相对应，是Latents的时序condition，一般为首帧，b c t(1) ho wo
-                be corresponding to latents, vision condtion latents, usually first frame, should be b c t(1) ho wo.
-            controlnet_latents:
-                与image二选一，image会被转化成controlnet_latents
-                Choose either image or controlnet_latents. If image is chosen, it will be converted to controlnet_latents.
-            controlnet_condition_images:
-                Optional[torch.FloatTensor]# b c t(1) ho wo，与image相对应，会和image在t通道concat一起，然后转化成 controlnet_latents
-                b c t(1) ho wo, corresponding to image, will be concatenated along the t channel with image and then converted to controlnet_latents.
-            controlnet_condition_latents: Optional[torch.FloatTensor]:#
-                b c t(1) ho wo，会和 controlnet_latents 在t 通道concat一起，转化成 controlnet_latents
-                b c t(1) ho wo will be concatenated along the t channel with controlnet_latents and converted to controlnet_latents.
+            condition_latents：与latents相对应，是Latents的时序condition，一般为首帧，b c t(1) ho wo
+            controlnet_latents: 与image二选一，image会被转化成controlnet_latents
+            controlnet_condition_images: Optional[torch.FloatTensor]# b c t(1) ho wo，与image相对应，会和image在t通道concat一起，然后转化成 controlnet_latents
+            controlnet_condition_latents: Optional[torch.FloatTensor]:# b c t(1) ho wo，会和 controlnet_latents 在t 通道concat一起，转化成 controlnet_latents
             height (`int`, *optional*, defaults to self.unet.config.sample_size * self.vae_scale_factor):
                 The height in pixels of the generated image.
             width (`int`, *optional*, defaults to self.unet.config.sample_size * self.vae_scale_factor):
@@ -1491,7 +1479,7 @@ class MusevControlNetPipeline(
                 The percentage of total steps at which the controlnet stops applying.
             skip_temporal_layer (`bool`: default to False) 为False时，unet起video生成作用,会运行时序生成的block；skip_temporal_layer为True时，unet起原image作用，跳过时序生成的block。
             need_img_based_video_noise: bool = False, 当只有首帧latents时，是否需要扩展为video noise;
-            num_videos_per_prompt: now only support 1.
+            decoder_t_segment: (`int`: default 200): split video latenst into segmens, and do decoder, gpu2cpu, then concat. To avoid gpu memory overflow.
 
         Examples:
 
@@ -1735,8 +1723,29 @@ class MusevControlNetPipeline(
             width=width,
         )
 
+        ip_adapter_audio_emb = self.get_ip_adapter_audio_emb(
+            audio_emb=audio_emb,
+            batch_size=batch_size,
+            device=device,
+            dtype=dtype,
+            do_classifier_free_guidance=do_classifier_free_guidance,
+        )
+        if ip_adapter_audio_emb is not None:
+            audio_emb_shape = audio_emb.shape
+            condition_audio_emb_shape = (
+                audio_emb_shape[:1] + (n_vision_cond,) + audio_emb_shape[2:]
+            )
+            condition_audio_emb = torch.zeros(condition_audio_emb_shape)
+
+            condition_ip_adapter_audio_emb = self.get_ip_adapter_audio_emb(
+                audio_emb=condition_audio_emb,
+                batch_size=batch_size,
+                device=device,
+                dtype=dtype,
+                do_classifier_free_guidance=do_classifier_free_guidance,
+            )
+
         # 当前仅当没有ip_adapter时，按照参数 prompt_only_use_image_prompt 要求是否完全替换 image_prompt_emb
-        # only if ip_adapter is None and prompt_only_use_image_prompt is True, use image_prompt_emb replace text_prompt
         if (
             ip_adapter_image_emb is not None
             and prompt_only_use_image_prompt
@@ -1845,7 +1854,6 @@ class MusevControlNetPipeline(
         with self.progress_bar(total=num_inference_steps) as progress_bar:
             for i, t in enumerate(timesteps):
                 # 使用 last_mid_video_latents 来影响初始化latent，该部分效果较差，暂留代码
-                # use last_mide_video_latents to affect initial latent. works bad, Temporarily reserved
                 if i == 0:
                     if record_mid_video_latents:
                         mid_video_latents.append(latents[:, :, -video_overlap:])
@@ -1943,10 +1951,24 @@ class MusevControlNetPipeline(
                             data2_index=sub_latent_index_c,
                             dim=2,
                         )
+                        if ip_adapter_audio_emb is not None:
+                            ip_adapter_audio_emb_c = torch.cat(
+                                [ip_adapter_audio_emb[:, c] for c in context]
+                            )
+
+                            ip_adapter_audio_emb_c = batch_concat_two_tensor_with_index(
+                                data1=condition_ip_adapter_audio_emb,
+                                data1_index=vision_condition_latent_index,
+                                data2=ip_adapter_audio_emb_c,
+                                data2_index=sub_latent_index_c,
+                                dim=1,
+                            )
+                        else:
+                            ip_adapter_audio_emb_c = None
+
                     if control_image is not None:
                         if vision_condition_latent_index is not None:
                             # 获取 vision_condition 对应的 control_imgae/control_latent 部分
-                            # generate control_image/control_latent corresponding to vision_condition
                             controlnet_condtion_latent_index = (
                                 vision_condition_latent_index.clone().cpu().tolist()
                             )
@@ -1991,7 +2013,6 @@ class MusevControlNetPipeline(
                     if controlnet_latents is not None:
                         if vision_condition_latent_index is not None:
                             # 获取 vision_condition 对应的 control_imgae/control_latent 部分
-                            # generate control_image/control_latent corresponding to vision_condition
                             controlnet_condtion_latent_index = (
                                 vision_condition_latent_index.clone().cpu().tolist()
                             )
@@ -2061,6 +2082,8 @@ class MusevControlNetPipeline(
                         facein_scale=facein_scale,
                         ip_adapter_face_emb=ip_adapter_face_emb,
                         ip_adapter_face_scale=ip_adapter_face_scale,
+                        ip_adapter_audio_emb=ip_adapter_audio_emb_c,
+                        ip_adapter_audio_scale=ip_adapter_audio_scale,
                         do_classifier_free_guidance=do_classifier_free_guidance,
                         pose_guider_emb=pose_guider_emb,
                     )[0]
@@ -2080,7 +2103,7 @@ class MusevControlNetPipeline(
                 if (
                     last_mid_video_noises is not None
                     and len(last_mid_video_noises) > 0
-                    and i <= num_inference_steps // 2  # 是个超参数 super paramter
+                    and i <= num_inference_steps // 2  # 是个超参数
                 ):
                     if self.print_idx == 1:
                         logger.debug(
@@ -2118,7 +2141,7 @@ class MusevControlNetPipeline(
                 if (
                     last_mid_video_latents is not None
                     and len(last_mid_video_latents) > 0
-                    and i <= 1  # 超参数, super parameter
+                    and i <= 1  # 超参数
                 ):
                     if self.print_idx == 1:
                         logger.debug(
@@ -2133,6 +2156,13 @@ class MusevControlNetPipeline(
                     )
                 if record_mid_video_latents:
                     mid_video_latents.append(latents[:, :, -video_overlap:])
+                # TODO：参考 https://github.com/RQ-Wu/LAMP/blob/master/lamp/pipelines/pipeline_lamp.py#L379
+                # Adain plus，目前会使视频变纯色，有待分析
+                # if self.unet.need_adain_temporal_cond and latents.shape[2] > 1:
+                #     latents = adaptive_instance_normalization(
+                #         src=latents,
+                #         dst=condition_latents,
+                #     )
 
                 if need_middle_latents is True:
                     videos_mid.append(self.decode_latents(latents))
@@ -2153,7 +2183,44 @@ class MusevControlNetPipeline(
                 data2_index=latent_index,
                 dim=2,
             )
-        video = self.decode_latents(latents)
+        # Post-processing
+        # TODO：参考 https://github.com/RQ-Wu/LAMP/blob/master/lamp/pipelines/pipeline_lamp.py#L379
+        # Adain plus，目前会使视频变纯色，有待分析
+        # if self.unet.need_adain_temporal_cond and latents.shape[2] > 1:
+        #     latents = batch_adain_conditioned_tensor(
+        #         latents,
+        #         num_frames=latents.shape[2],
+        #         need_style_fidelity=False,
+        #         src_index=latent_index,
+        #         dst_index=vision_condition_latent_index,
+        #     )
+        b, c, t, h, w = latents.shape
+        num_segments = (t + decoder_t_segment - 1) // decoder_t_segment
+
+        video_segments = []
+
+        # 在 t 维度上切分 latents 并分段解码
+        for i in range(num_segments):
+            print(f"Decoding {i} th segment")
+            start_t = i * decoder_t_segment
+            end_t = min((i + 1) * decoder_t_segment, t)
+
+            # 从 latents 中获取当前片段
+            latents_segment = latents[:, :, start_t:end_t, :, :]
+
+            # 对当前片段进行解码
+            video_segment = self.decode_latents(latents_segment)
+
+            # 将解码后的片段添加到列表中
+            video_segments.append(video_segment)
+
+        # 沿着 t 维度拼接解码后的视频片段
+        # 使用 numpy.stack() 将这些数组堆叠起来
+
+        video_segments_np = np.concatenate(video_segments, axis=2)
+
+        # 使用 torch.from_numpy() 将结果转换为 torch.tensor
+        video = torch.from_numpy(video_segments_np)
 
         if skip_temporal_layer:
             self.unet.set_skip_temporal_layers(False)
