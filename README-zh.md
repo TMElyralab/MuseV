@@ -13,7 +13,7 @@ Wenjiang Zhou
 (<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author, benbinwu@tencent.com)
 </font>
 
-**[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**   **[HuggingfaceSpace](https://huggingface.co/spaces/AnchorFake/MuseVDemo)**  **[project](comming soon)**    **Technical report (comming soon)**
+**[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**   **[HuggingfaceSpace](https://huggingface.co/spaces/AnchorFake/MuseVDemo)**  **[project](https://tmelyralab.github.io/)**    **Technical report (comming soon)**
 
 
 我们在2023年3月相信扩散模型可以模拟世界，也开始基于扩散模型研发世界视觉模拟器。`MuseV`是在 2023 年 7 月左右实现的一个里程碑。受到 Sora 进展的启发，我们决定开源 MuseV。MuseV 站在开源的肩膀上成长，也希望能够借此反馈社区。接下来，我们将转向有前景的扩散+变换器方案。
@@ -48,6 +48,7 @@ Wenjiang Zhou
 生成结果的所有帧直接由`MuseV`生成，没有时序超分辨、空间超分辨等任何后处理。
 <!-- # TODO: // use youtu video link? -->
 以下所有测试用例都维护在 `configs/tasks/example.yaml`，可以直接运行复现。
+**[project](https://tmelyralab.github.io/)** 有更多测试用例，包括一两分钟的长视频。
 
 ### 输入文本、图像的视频生成
 #### 人类
