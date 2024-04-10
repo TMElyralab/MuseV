@@ -11,7 +11,7 @@ from huggingface_hub import snapshot_download
 
 ProjectDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 CheckpointsDir = os.path.join(ProjectDir, "checkpoints")
-ignore_video2video = False
+ignore_video2video = True
 
 
 def download_model():
