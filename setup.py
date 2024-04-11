@@ -7,6 +7,8 @@ from setuptools import setup, find_packages
 
 with open("requirements.txt", "r") as f:
     requirements = f.read().splitlines()
+requirements = [x for x in requirements if x and not x.startswith("#")]
+
 
 setup(
     name="musev",  # used in pip install
@@ -16,6 +18,8 @@ setup(
     description="Package about human video creation",
     # long_description=long_description,
     # long_description_content_type="text/markdown",
+    packages=find_packages("musev"),
+    package_dir={"": "musev"},
     url="https://github.com/TMElyralab/MuseV",
     # include_package_data=True, # please edit MANIFEST.in
     # packages=find_packages(),  # used in import
@@ -24,5 +28,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    # extras_require=extras_require,
     install_requires=requirements,
+    dependency_links=["https://download.pytorch.org/whl/cu118"],
 )
