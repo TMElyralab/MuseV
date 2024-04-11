@@ -12,6 +12,7 @@ from huggingface_hub import snapshot_download
 ProjectDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 CheckpointsDir = os.path.join(ProjectDir, "checkpoints")
 ignore_video2video = False
+max_image_edge = 1280
 
 
 def download_model():
@@ -46,6 +47,9 @@ def hf_online_t2v_inference(
     video_len,
     img_edge_ratio,
 ):
+    img_edge_ratio, _, _ = limit_shape(
+        image_np, w, h, img_edge_ratio, max_image_edge=max_image_edge
+    )
     if not isinstance(image_np, np.ndarray):  # None
         raise gr.Error("Need input reference image")
     return online_t2v_inference(
@@ -66,6 +70,9 @@ def hg_online_v2v_inference(
     video_length,
     img_edge_ratio,
 ):
+    img_edge_ratio, _, _ = limit_shape(
+        image_np, w, h, img_edge_ratio, max_image_edge=max_image_edge
+    )
     if not isinstance(image_np, np.ndarray):  # None
         raise gr.Error("Need input reference image")
     return online_v2v_inference(
@@ -82,11 +89,17 @@ def hg_online_v2v_inference(
     )
 
 
-def limit_shape(image, input_w, input_h, img_edge_ratio, max_image_edge=960):
+def limit_shape(image, input_w, input_h, img_edge_ratio, max_image_edge=max_image_edge):
     """limite generation video shape to avoid gpu memory overflow"""
-    if isinstance(image, np.ndarray) and (input_h == -1 and input_w == -1):
-        input_h, input_w, _ = image.shape
-    h, w, _ = image.shape
+    if input_h == -1 and input_w == -1:
+        if isinstance(image, np.ndarray):
+            input_h, input_w, _ = image.shape
+        elif isinstance(image, PIL.Image.Image):
+            input_w, input_h = image.size
+        else:
+            raise ValueError(
+                f"image should be in [image, ndarray], but given {type(image)}"
+            )
     if img_edge_ratio == 0:
         img_edge_ratio = 1
     img_edge_ratio_infact = min(max_image_edge / max(input_h, input_w), img_edge_ratio)
@@ -235,8 +248,8 @@ with gr.Blocks(css=css) as demo:
                 "../../data/images/yongen.jpeg",
             ],
             [
-                "(masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3)",
-                "../../data/images/The-Laughing-Cavalier.jpg",
+                "(masterpiece, best quality, highres:1), peaceful beautiful sea scene",
+                "../../data/images/seaside4.jpeg",
             ],
         ]
         with gr.Row():
@@ -345,6 +358,7 @@ with gr.Blocks(css=css) as demo:
                     fn=hg_online_v2v_inference,
                     cache_examples=False,
                 )
+
             img_edge_ratio.change(
                 fn=limit_shape,
                 inputs=[image, w, h, img_edge_ratio],
