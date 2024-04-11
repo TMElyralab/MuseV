@@ -1,8 +1,11 @@
 # tensorflow==2.12.0
 # tensorboard==2.12.0
-torch==2.0.1  --index-url https://download.pytorch.org/whl/cu118 
-torchvision==0.15.2  --index-url https://download.pytorch.org/whl/cu118 
-torchaudio==2.0.2  --index-url https://download.pytorch.org/whl/cu118 
+# torch==2.0.1  --index-url https://download.pytorch.org/whl/cu118 
+# torchvision==0.15.2  --index-url https://download.pytorch.org/whl/cu118 
+# torchaudio==2.0.2  --index-url https://download.pytorch.org/whl/cu118 
+torch
+torchvision
+torchaudio
 ninja==1.11.1 
 transformers==4.33.1
 bitsandbytes==0.41.1
@@ -46,7 +49,6 @@ requests
 scipy
 six
 tqdm
-gradio==4.12
 albumentations==1.3.1
 opencv-contrib-python==4.8.0.76
 imageio-ffmpeg==0.4.8
@@ -71,24 +73,25 @@ torchmetrics==1.1.1
 invisible-watermark==0.1.5
 gdown==4.5.3
 ftfy==6.1.1
-modelcards==0.1.6
 jupyters
 ipywidgets==8.0.3
 ipython
 matplotlib==3.6.2
 redis==4.5.1
-pydantic
+# pydantic~=1.0
+gradio
 loguru==0.6.0
 IProgress==0.4
 markupsafe==2.0.1
 xlsxwriter
 cuid
 spaces
+# https://mirrors.cloud.tencent.com/pypi/packages/de/a6/a49d5af79a515f5c9552a26b2078d839c40fcf8dccc0d94a1269276ab181/tb_nightly-2.1.0a20191022-py3-none-any.whl
+# basicsr
 ip_adapter @ git+https://github.com/tencent-ailab/IP-Adapter.git@main
 clip @ git+https://github.com/openai/CLIP.git@main
 controlnet_aux @ git+https://github.com/TMElyralab/controlnet_aux.git@tme
 diffusers @ git+https://github.com/TMElyralab/diffusers.git@tme
 mmcm @ git+https://github.com/TMElyralab/MMCM.git@setup
 # https://mirrors.cloud.tencent.com/pypi/packages/de/a6/a49d5af79a515f5c9552a26b2078d839c40fcf8dccc0d94a1269276ab181/tb_nightly-2.1.0a20191022-py3-none-any.whl
-basicsr
-# numpy==1.23.5
+numpy==1.23.5
