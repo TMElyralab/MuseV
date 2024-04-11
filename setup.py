@@ -7,7 +7,21 @@ from setuptools import setup, find_packages
 
 ProjectDir = os.path.dirname(__file__)
 result = subprocess.run(["pip", "install", "basicsr"], capture_output=True, text=True)
-
+result = subprocess.run(
+    ["pip", "install", "--no-cache-dir", "-U", "openmim"],
+    capture_output=True,
+    text=True,
+)
+result = subprocess.run(["mim", "install", "mmengine"], capture_output=True, text=True)
+result = subprocess.run(
+    ["mim", "install", "mmcv>=2.0.1"], capture_output=True, text=True
+)
+result = subprocess.run(
+    ["mim", "install", "mmdet>=3.1.0"], capture_output=True, text=True
+)
+result = subprocess.run(
+    ["mim", "install", "mmpose>=1.1.0"], capture_output=True, text=True
+)
 
 with open(os.path.join(ProjectDir, "requirements.txt"), "r") as f:
     requirements = f.read().splitlines()
@@ -33,21 +47,4 @@ setup(
     ],
     install_requires=requirements,
     # dependency_links=["https://download.pytorch.org/whl/cu118],
-)
-
-
-result = subprocess.run(
-    ["pip", "install", "--no-cache-dir", "-U", "openmim"],
-    capture_output=True,
-    text=True,
-)
-result = subprocess.run(["mim", "install", "mmengine"], capture_output=True, text=True)
-result = subprocess.run(
-    ["mim", "install", "mmcv>=2.0.1"], capture_output=True, text=True
-)
-result = subprocess.run(
-    ["mim", "install", "mmdet>=3.1.0"], capture_output=True, text=True
-)
-result = subprocess.run(
-    ["mim", "install", "mmpose>=1.1.0"], capture_output=True, text=True
 )
