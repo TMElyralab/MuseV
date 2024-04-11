@@ -1,13 +1,8 @@
 # tensorflow==2.12.0
 # tensorboard==2.12.0
-# torch==2.0.1+cu118
-# torchvision==0.15.2+cu118 
-# torch==2.0.1  --index-url https://download.pytorch.org/whl/cu118 
-# torchvision==0.15.2  --index-url https://download.pytorch.org/whl/cu118 
-# torchaudio==2.0.2  --index-url https://download.pytorch.org/whl/cu118 
-torch==2.0.1
-torchvision==0.15.2
-torchaudio==2.0.2
+torch==2.0.1  --index-url https://download.pytorch.org/whl/cu118 
+torchvision==0.15.2  --index-url https://download.pytorch.org/whl/cu118 
+torchaudio==2.0.2  --index-url https://download.pytorch.org/whl/cu118 
 ninja==1.11.1 
 transformers==4.33.1
 bitsandbytes==0.41.1
@@ -89,12 +84,11 @@ markupsafe==2.0.1
 xlsxwriter
 cuid
 spaces
-# https://mirrors.cloud.tencent.com/pypi/packages/de/a6/a49d5af79a515f5c9552a26b2078d839c40fcf8dccc0d94a1269276ab181/tb_nightly-2.1.0a20191022-py3-none-any.whl
 ip_adapter @ git+https://github.com/tencent-ailab/IP-Adapter.git@main
 clip @ git+https://github.com/openai/CLIP.git@main
 controlnet_aux @ git+https://github.com/TMElyralab/controlnet_aux.git@tme
 diffusers @ git+https://github.com/TMElyralab/diffusers.git@tme
 mmcm @ git+https://github.com/TMElyralab/MMCM.git@setup
-
+# https://mirrors.cloud.tencent.com/pypi/packages/de/a6/a49d5af79a515f5c9552a26b2078d839c40fcf8dccc0d94a1269276ab181/tb_nightly-2.1.0a20191022-py3-none-any.whl
 basicsr
 # numpy==1.23.5

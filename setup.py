@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 with open("requirements.txt", "r") as f:
     requirements = f.read().splitlines()
 requirements = [x for x in requirements if x and not x.startswith("#")]
-
+requirements = [x.split(" ")[0] if "index-url" in x else x for x in requirements]
 
 setup(
     name="musev",  # used in pip install
