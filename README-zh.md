@@ -342,6 +342,14 @@ Wenjiang Zhou
 # 快速入门
 准备 Python 环境并安装额外的包，如 `diffusers`、`controlnet_aux`、`mmcm`。
 
+## 第三方整合版
+一些第三方的整合，方便大家安装、使用，感谢第三方的工作。
+同时也希望注意，我们没有对第三方的支持做验证、维护和后续更新，具体效果请以本项目为准。
+### [ComfyUI](https://github.com/chaojie/ComfyUI-MuseV)
+### [windows整合包](https://www.bilibili.com/video/BV1ux4y1v7pF/?vd_source=fe03b064abab17b79e22a692551405c3)
+netdisk:https://www.123pan.com/s/Pf5Yjv-Bb9W3.html
+code: glut
+
 ## 准备环境
 建议您优先使用 `docker` 来准备 Python 环境。
 

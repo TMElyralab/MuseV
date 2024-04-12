@@ -339,6 +339,15 @@ The character of talk, `Sun Xinying` is a supermodel KOL. You can follow her on 
 # Quickstart
 Prepare python environment and install extra package like `diffusers`, `controlnet_aux`, `mmcm`.
 
+## Third party integration
+Thanks for the third-party integration, which makes installation and use more convenient for everyone.
+We also hope you note that we have not verified, maintained, or updated third-party. Please refer to this project for specific results.
+
+### [ComfyUI](https://github.com/chaojie/ComfyUI-MuseV)
+### [One click integration package in windows](https://www.bilibili.com/video/BV1ux4y1v7pF/?vd_source=fe03b064abab17b79e22a692551405c3)
+netdisk:https://www.123pan.com/s/Pf5Yjv-Bb9W3.html
+
+code: glut
 
 ## Prepare environment
 You are recommended to use `docker` primarily to prepare python environment.
