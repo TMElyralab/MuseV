@@ -1381,6 +1381,8 @@ class MusevControlNetPipeline(
         context_batch_size=1,
         interpolation_factor=1,
         # parallel_denoise parameter end
+        decoder_t_segment: int = 200,
+
     ):
         r"""
         旨在兼容text2video、text2image、img2img、video2video、是否有controlnet等的通用pipeline。目前仅不支持img2img、video2video。
@@ -2153,7 +2155,35 @@ class MusevControlNetPipeline(
                 data2_index=latent_index,
                 dim=2,
             )
-        video = self.decode_latents(latents)
+        b, c, t, h, w = latents.shape
+        num_segments = (t + decoder_t_segment - 1) // decoder_t_segment
+
+        video_segments = []
+
+        # 在 t 维度上切分 latents 并分段解码
+        for i in range(num_segments):
+            print(f"Decoding {i} th segment")
+            start_t = i * decoder_t_segment
+            end_t = min((i + 1) * decoder_t_segment, t)
+
+            # 从 latents 中获取当前片段
+            latents_segment = latents[:, :, start_t:end_t, :, :]
+
+            # 对当前片段进行解码
+            video_segment = self.decode_latents(latents_segment)
+
+            # 将解码后的片段添加到列表中
+            video_segments.append(video_segment)
+
+        # 沿着 t 维度拼接解码后的视频片段
+        # 使用 numpy.stack() 将这些数组堆叠起来
+
+        video_segments_np = np.concatenate(video_segments, axis=2)
+
+        # 使用 torch.from_numpy() 将结果转换为 torch.tensor
+        video = torch.from_numpy(video_segments_np)
+
+
 
         if skip_temporal_layer:
             self.unet.set_skip_temporal_layers(False)
