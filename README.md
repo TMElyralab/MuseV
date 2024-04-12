@@ -406,9 +406,9 @@ git clone https://huggingface.co/TMElyralab/MuseV ./checkpoints
         - `referencenet`: similar to `AnimateAnyone`
         - `ip_adapter_image_proj.bin`: images clip emb project layer, refer to `IPAdapter`
     - `musev_referencenet_pose`: based on `musev_referencenet`, fix `referencenet`and `controlnet_pose`, train `unet motion` and `IPAdapter`. `GPU memory consumption` $\approx 12G$
-- `t2i/sd1.5`: text2image model, parameter are frozen when training motion module. Different `t2i` base_model has a significant impact.
-    - `majicmixRealv6Fp16`: example, could be replaced with other t2i base. download from [majicmixRealv6Fp16](https://civitai.com/models/43331?modelVersionId=94640)
-    - `fantasticmix_v10`: example, could be replaced with other t2i base. download from [fantasticmix_v10](https://civitai.com/models/22402?modelVersionId=26744)
+- `t2i/sd1.5`: text2image model, parameter are frozen when training motion module. Different `t2i` base_model has a significant impact.could be replaced with other t2i base.
+    - `majicmixRealv6Fp16`: example, download from [majicmixRealv6Fp16](https://civitai.com/models/43331?modelVersionId=94640)
+    - `fantasticmix_v10`: example, download from [fantasticmix_v10](https://civitai.com/models/22402?modelVersionId=26744)
 - `IP-Adapter/models`: download from [IPAdapter](https://huggingface.co/h94/IP-Adapter/tree/main)
     - `image_encoder`: vision clip model.
     - `ip-adapter_sd15.bin`: original IPAdapter model checkpoint.
@@ -439,7 +439,7 @@ python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --
 - `n_batch`: generation numbers of shot, $total\_frames=n\_batch * time\_size + n\_viscond$, default=`1`。
 - `context_frames`: context_frames num. If `time_size` > `context_frame`，`time_size` window is split into many sub-windows for parallel denoising"。 default=`12`。
 
-To generate long videos, there two ways:
+**To generate long videos**, there two ways:
 1. `visual conditioned parallel denoise`: set `n_batch=1`, `time_size` = all frames you want.
 1. `traditional end-to-end`: set `time_size` = `context_frames` = frames of a shot (`12`), `context_overlap` = 0；
 
@@ -454,8 +454,7 @@ supports `referencenet`, `IPAdapter`, `IPAdapterFaceID`, `Facein`.
 
 **Some parameters that affect the motion range and generation results**：
 - `video_guidance_scale`: Similar to text2image, control influence between cond and uncond，default=`3.5`
-- `guidance_scale`:  The parameter ratio in the first frame image between cond and uncond, default=`3.5`
-- `use_condition_image`:  Whether to use the given first frame for video generation.
+- `use_condition_image`:  Whether to use the given first frame for video generation, if not generate vision condition frames first. Default=`True`.
 - `redraw_condition_image`: Whether to redraw the given first frame image.
 - `video_negative_prompt`: Abbreviation of full `negative_prompt` in config path. default=`V2`.
 
@@ -468,11 +467,11 @@ python scripts/inference/video2video.py --sd_model_name fantasticmix_v10  --unet
 **import parameters**
 
 Most of the parameters are same as `musev_text2video`. Special parameters of `video2video` are:
-1. need to set `video_path` in `test_data`. Now supports `rgb video` and `controlnet_middle_video`。
-- `which2video`: whether `rgb` video influences initial noise, more strongly than controlnet condition. If `True`, then redraw video.
+1. need to set `video_path` as reference video in `test_data`. Now reference video supports `rgb video` and `controlnet_middle_video`。
+- `which2video`: whether `rgb` video influences initial noise, influence of `rgb` is stronger than of  controlnet condition.
 - `controlnet_name`：whether to use `controlnet condition`, such as `dwpose,depth`.
 - `video_is_middle`: `video_path` is `rgb video` or  `controlnet_middle_video`. Can be set for every `test_data` in test_data_path.
-- `video_has_condition`: whether condtion_images is aligned with the first frame of video_path. If Not, firstly generate `condition_images` and then align with concatation. set in `test_data`。
+- `video_has_condition`: whether condtion_images is aligned with the first frame of video_path. If Not, exrtact condition of `condition_images` firstly generate, and then align with concatation. set in `test_data`。
 
 all controlnet_names refer to [mmcm](https://github.com/TMElyralab/MMCM/blob/main/mmcm/vision/feature_extractor/controlnet.py#L513)
 ```python
