@@ -410,7 +410,8 @@ git clone https://huggingface.co/TMElyralab/MuseV ./checkpoints
         - `ip_adapter_image_proj.bin`：图像特征变换层，参考 `IPAdapter`。
     - `musev_referencenet_pose`：这个版本基于 `musev_referencenet`，固定 `referencenet` 和 `controlnet_pose`，训练 `unet motion` 和 `IPAdapter`。推断 `GPU 内存消耗` $\approx 12G$。
 - `t2i/sd1.5`：text2image 模型，在训练运动模块时参数被冻结。
-    - majicmixRealv6Fp16：示例，可以替换为其他 t2i 基础。从 [majicmixRealv6Fp16](https://civitai.com/models/43331/majicmix-realistic) 下载。
+    - `majicmixRealv6Fp16`：示例，可以替换为其他 t2i 基础。从 [majicmixRealv6Fp16](https://civitai.com/models/43331/majicmix-realistic) 下载。
+    - `fantasticmix_v10`: 可在 [fantasticmix_v10](https://civitai.com/models/22402?modelVersionId=26744) 下载。
 - `IP-Adapter/models`：从 [IPAdapter](https://huggingface.co/h94/IP-Adapter/tree/main) 下载。
     - `image_encoder`：视觉特征抽取模型。
     - `ip-adapter_sd15.bin`：原始 IPAdapter 模型预训练权重。
@@ -431,7 +432,7 @@ git clone https://huggingface.co/TMElyralab/MuseV ./checkpoints
 python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --unet_model_name musev_referencenet --referencenet_model_name musev_referencenet --ip_adapter_model_name musev_referencenet   -test_data_path ./configs/tasks/example.yaml  --output_dir ./output  --n_batch 1  --target_datas yongen  --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder  --time_size 12 --fps 12  
 ```
 **通用参数**：
-- `test_data_path`：测试用例 任务路径
+- `test_data_path`：测试用例任务路径
 - `target_datas`：如果 `test_data_path` 中的 `name` 在 `target_datas` 中，则只运行这些子任务。`sep` 是 `,`；
 - `sd_model_cfg_path`：T2I sd 模型路径，模型配置路径或模型路径。
 - `sd_model_name`：sd 模型名称，用于在 `sd_model_cfg_path` 中选择完整模型路径。使用 `,` 分隔的多个模型名称，或 `all`。
@@ -441,7 +442,7 @@ python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --
 - `n_batch`：首尾相连方式生成总片段数，$total\_frames=n\_batch * time\_size + n\_viscond$，默认为 `1`。
 - `context_frames`： 并行去噪子窗口一次生成的帧数。如果 `time_size` > `context_frame`，则会启动并行去噪逻辑， `time_size` 窗口会分成多个子窗口进行并行去噪。默认为 `12`。
 
-生成长视频，有两种方法，可以共同使用：
+生成**长视频**，有两种方法，可以共同使用：
 1. `视觉条件并行去噪`：设置 `n_batch=1`，`time_size` = 想要的所有帧。
 2. `传统的首尾相连方式`：设置 `time_size` = `context_frames` = 一次片段的帧数 (`12`)，`context_overlap` = 0。会首尾相连方式生成`n_batch`片段数，首尾相连存在误差累计，当`n_batch`越大，最后的结果越差。
 
@@ -456,8 +457,7 @@ python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --
 
 **一些影响运动范围和生成结果的参数**：
 - `video_guidance_scale`：类似于 text2image，控制 cond 和 uncond 之间的影响，影响较大，默认为 `3.5`。
-- `guidance_scale`：在第一帧图像中 cond 和 uncond 之间的参数比例，，影响不大，默认为 `3.5`。
-- `use_condition_image`：是否使用给定的第一帧进行视频生成。
+- `use_condition_image`：是否使用给定的第一帧进行视频生成, 默认 `True`。
 - `redraw_condition_image`：是否重新绘制给定的第一帧图像。
 - `video_negative_prompt`：配置文件中全 `negative_prompt` 的缩写。默认为 `V2`。
 
@@ -470,10 +470,10 @@ python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --un
 
 大多数参数与 `musev_text2video` 相同。`video2video` 的特殊参数有：
 1. 需要在 `test_data` 中设置 `video_path`。现在支持 `rgb video` 和 `controlnet_middle_video`。
-- `which2video`： 参与引导视频视频的参考视频部分。 如果是 `video_middle`，则只使用类似`pose`、`depth`的 `video_middle`，如果是 `video`， 视频本身会参与视频噪声初始化。等价于`img2imge`。
+- `which2video`： 参考视频类型。 如果是 `video_middle`，则只使用类似`pose`、`depth`的 `video_middle`；如果是 `video`， 视频本身也会参与视频噪声初始化，类似于`img2imge`。
 - `controlnet_name`：是否使用 `controlnet condition`，例如 `dwpose,depth`， pose的话 优先建议使用`dwpose_body_hand`。
 - `video_is_middle`：`video_path` 是 `rgb video` 还是 `controlnet_middle_video`。可以为 `test_data_path` 中的每个 `test_data` 设置。
-- `video_has_condition`：condtion_images 是否与 video_path 的第一帧对齐。如果不是，则首先生成 `condition_images`，然后与拼接对齐。设置在 `test_data` 中。
+- `video_has_condition`：condtion_images 是否与 video_path 的第一帧对齐。如果不是，则首先生成 `condition_images`，然后与参考视频拼接对齐。 目前仅支持参考视频是`video_is_middle=True`，可`test_data` 设置。
 
 所有 `controlnet_names` 维护在 [mmcm](https://github.com/TMElyralab/MMCM/blob/main/mmcm/vision/feature_extractor/controlnet.py#L513)
 ```python
