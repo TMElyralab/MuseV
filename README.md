@@ -529,7 +529,7 @@ There are still many limitations, including
 
 1. Lack of generalization ability. Some visual condition image perform well, some perform bad. Some t2i pretraied model perform well, some perform bad.
 1. Limited types of video generation and limited motion range, partly because of limited types of training data. The released `MuseV` has been trained on approximately 60K human text-video pairs with resolution `512*320`. `MuseV` has greater motion range while lower video quality at lower resolution. `MuseV` tends to generate less motion range with high video quality. Trained on larger, higher resolution, higher quality text-video dataset may make `MuseV` better.
-1. Watermarks may appear because of `webvid`. A cleaner dataset withour watermarks may solve this issue.
+1. Watermarks may appear because of `webvid`. A cleaner dataset without watermarks may solve this issue.
 1. Limited types of long video generation. Visual Conditioned Parallel Denoise can solve accumulated error of video generation, but the current method is only suitable for relatively fixed camera scenes.
 1. Undertrained referencenet and IP-Adapter, beacause of limited time and limited resources.
 1. Understructured code. `MuseV`  supports rich and dynamic features, but with complex and unrefacted codes. It takes time to familiarize.
