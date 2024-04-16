@@ -13,7 +13,7 @@ Wenjiang Zhou
 (<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author, benbinwu@tencent.com)
 </font>
 
-**[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**   **[HuggingfaceSpace](https://huggingface.co/spaces/AnchorFake/MuseVDemo)**  **[project](https://tmelyralab.github.io/)**    **Technical report (comming soon)**
+**[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**   **[HuggingfaceSpace](https://huggingface.co/spaces/AnchorFake/MuseVDemo)**  **[project](https://tmelyralab.github.io/MuseV_Page/)**    **Technical report (comming soon)**
 
 
 我们在2023年3月相信扩散模型可以模拟世界，也开始基于扩散模型研发世界视觉模拟器。`MuseV`是在 2023 年 7 月左右实现的一个里程碑。受到 Sora 进展的启发，我们决定开源 MuseV。MuseV 站在开源的肩膀上成长，也希望能够借此反馈社区。接下来，我们将转向有前景的扩散+变换器方案。
@@ -46,9 +46,11 @@ Wenjiang Zhou
 
 ## 测试用例
 生成结果的所有帧直接由`MuseV`生成，没有时序超分辨、空间超分辨等任何后处理。
+更多测试结果请看[MuseVPage]()
+
 <!-- # TODO: // use youtu video link? -->
 以下所有测试用例都维护在 `configs/tasks/example.yaml`，可以直接运行复现。
-**[project](https://tmelyralab.github.io/)** 有更多测试用例，包括一两分钟的长视频。
+**[project](https://tmelyralab.github.io/)** 有更多测试用例，包括直接生成的、一两分钟的长视频。
 
 ### 输入文本、图像的视频生成
 #### 人类
@@ -67,19 +69,6 @@ Wenjiang Zhou
      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/732cf1fd-25e7-494e-b462-969c9425d277" width="100" controls preload></video>
     </td>
     <td>(masterpiece, best quality, highres:1),(1boy, solo:1),(eye blinks:1.8),(head wave:1.3)
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <img src=./data/images/jinkesi2.jpeg width="400">
-    </td>
-    <td>
-     <video src="https://github.com/TMElyralab/MuseV/assets/163980830/62b533d3-95f3-48db-889d-75dde1ad04b7" width="100" controls preload></video>
-    </td>
-    <td>
-    (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
     </td>
   </tr>
 
@@ -128,28 +117,6 @@ Wenjiang Zhou
       (masterpiece, best quality, highres:1), playing guitar
     </td>
   </tr>
-  <tr>
-    <td>
-      <img src=./data/images/boy_play_guitar2.jpeg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/69ea9d0c-5ed0-44b9-bca9-a4829c8d8b68" width="100" controls preload></video>
-    </td>
-    <td>
-      (masterpiece, best quality, highres:1), playing guitar
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src=./data/images/girl_play_guitar4.jpeg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/d242e8a4-08ab-474f-b4a8-b718780d2991" width="100" controls preload></video>
-    </td>
-    <td>
-    (masterpiece, best quality, highres:1), playing guitar
-    </td>
-  </tr>
   <!-- famous people -->
   <tr>
     <td>
@@ -175,40 +142,6 @@ Wenjiang Zhou
     soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
     </td>
   </tr>
-  <tr>
-    <td>
-      <img src=./data/images/Portrait-of-Dr.-Gachet.jpg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/4072410a-ecea-4ee5-a9b4-735f9f462d51" width="100" controls preload></video>
-    </td>
-    <td>
-  (masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3)
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src=./data/images/Self-Portrait-with-Cropped-Hair.jpg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/5148beda-a1e1-44f0-ad84-2fb99ad73a11" width="100" controls preload></video>
-    </td>
-    <td>
-  (masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3), animate
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src=./data/images/The-Laughing-Cavalier.jpg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/df1c5943-15a3-41f5-afe7-e7497c81836d" width="100" controls preload></video>
-    </td>
-    <td>
-      (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
-    </td>
-  </tr>
 </table >
 
 #### 场景
@@ -229,17 +162,6 @@ Wenjiang Zhou
     <td>
       (masterpiece, best quality, highres:1), peaceful beautiful waterfall, an
     endless waterfall
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <img src=./data/images/river.jpeg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/d5cb2798-b5ce-497a-a058-ae63d664028e" width="100" controls preload></video>
-    </td>
-    <td>(masterpiece, best quality, highres:1), peaceful beautiful river
     </td>
   </tr>
 
@@ -313,15 +235,6 @@ Wenjiang Zhou
     <td>
       <video src="https://github.com/TMElyralab/MuseV/assets/163980830/951188d1-4731-4e7f-bf40-03cacba17f2f" width="100" controls preload></video>
     </td>
-  </tr>
-    <tr>
-    <td>
-       talk
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/ba0396ab-8aba-4440-803c-18b078ae1dd9" width="100" controls preload></video>
-    </td>
-  </tr>
   <tr>
     <td>
        sing

@@ -13,7 +13,7 @@ Wenjiang Zhou
 (<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author, benbinwu@tencent.com)
 </font>
 
-**[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**  **[HuggingfaceSpace](https://huggingface.co/spaces/AnchorFake/MuseVDemo)**  **[project](https://tmelyralab.github.io/)**    **Technical report (comming soon)**
+**[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**  **[HuggingfaceSpace](https://huggingface.co/spaces/AnchorFake/MuseVDemo)**  **[project](https://tmelyralab.github.io/MuseV_Page/)**    **Technical report (comming soon)**
 
 
 We have setup **the world simulator vision since March 2023, believing diffusion models can simulate the world**. `MuseV` was a milestone achieved around **July 2023**. Amazed by the progress of Sora, we decided to opensource `MuseV`, hopefully it will benefit the community. Next we will move on to the promising diffusion+transformer scheme.
@@ -45,9 +45,11 @@ Update: We have released <a href="https://github.com/TMElyralab/MuseTalk" style=
 
 ## Cases
 All frames were generated directly from text2video model, without any post process.
+MoreCase is in **[project](https://tmelyralab.github.io/MuseV_Page/)**, including **1-2 minute video**.
+
 <!-- # TODO: // use youtu video link? -->
 Examples bellow can be accessed at `configs/tasks/example.yaml`
-MoreCase is in **[project](https://tmelyralab.github.io/)** 
+
 
 ### Text/Image2Video
 
@@ -68,19 +70,6 @@ MoreCase is in **[project](https://tmelyralab.github.io/)**
      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/732cf1fd-25e7-494e-b462-969c9425d277" width="100" controls preload></video>
     </td>
     <td>(masterpiece, best quality, highres:1),(1boy, solo:1),(eye blinks:1.8),(head wave:1.3)
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <img src=./data/images/jinkesi2.jpeg width="400">
-    </td>
-    <td>
-     <video src="https://github.com/TMElyralab/MuseV/assets/163980830/62b533d3-95f3-48db-889d-75dde1ad04b7" width="100" controls preload></video>
-    </td>
-    <td>
-    (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
     </td>
   </tr>
 
@@ -129,28 +118,6 @@ MoreCase is in **[project](https://tmelyralab.github.io/)**
       (masterpiece, best quality, highres:1), playing guitar
     </td>
   </tr>
-  <tr>
-    <td>
-      <img src=./data/images/boy_play_guitar2.jpeg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/69ea9d0c-5ed0-44b9-bca9-a4829c8d8b68" width="100" controls preload></video>
-    </td>
-    <td>
-      (masterpiece, best quality, highres:1), playing guitar
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src=./data/images/girl_play_guitar4.jpeg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/d242e8a4-08ab-474f-b4a8-b718780d2991" width="100" controls preload></video>
-    </td>
-    <td>
-    (masterpiece, best quality, highres:1), playing guitar
-    </td>
-  </tr>
   <!-- famous people -->
   <tr>
     <td>
@@ -171,40 +138,6 @@ MoreCase is in **[project](https://tmelyralab.github.io/)**
     <td>
       <video src="https://github.com/TMElyralab/MuseV/assets/163980830/1ce11da6-14c6-4dcd-b7f9-7a5f060d71fb" width="100" controls preload></video>
     </td>   
-    <td>
-    (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
-    soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src=./data/images/Portrait-of-Dr.-Gachet.jpg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/4072410a-ecea-4ee5-a9b4-735f9f462d51" width="100" controls preload></video>
-    </td>
-    <td>
-  (masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3)
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src=./data/images/Self-Portrait-with-Cropped-Hair.jpg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/5148beda-a1e1-44f0-ad84-2fb99ad73a11" width="100" controls preload></video>
-    </td>
-    <td>
-  (masterpiece, best quality, highres:1),(1man, solo:1),(eye blinks:1.8),(head wave:1.3), animate
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src=./data/images/The-Laughing-Cavalier.jpg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/df1c5943-15a3-41f5-afe7-e7497c81836d" width="100" controls preload></video>
-    </td>
     <td>
       (masterpiece, best quality, highres:1),(1girl, solo:1),(beautiful face,
     soft skin, costume:1),(eye blinks:{eye_blinks_factor}),(head wave:1.3)
@@ -231,17 +164,6 @@ MoreCase is in **[project](https://tmelyralab.github.io/)**
     <td>
       (masterpiece, best quality, highres:1), peaceful beautiful waterfall, an
     endless waterfall
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <img src=./data/images/river.jpeg width="400">
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/d5cb2798-b5ce-497a-a058-ae63d664028e" width="100" controls preload></video>
-    </td>
-    <td>(masterpiece, best quality, highres:1), peaceful beautiful river
     </td>
   </tr>
 
@@ -309,15 +231,6 @@ The character of talk, `Sun Xinying` is a supermodel KOL. You can follow her on 
     <td>
       <video src="https://github.com/TMElyralab/MuseV/assets/163980830/951188d1-4731-4e7f-bf40-03cacba17f2f" width="100" controls preload></video>
     </td>
-  </tr>
-    <tr>
-    <td>
-       talk
-    </td>
-    <td>
-      <video src="https://github.com/TMElyralab/MuseV/assets/163980830/ba0396ab-8aba-4440-803c-18b078ae1dd9" width="100" controls preload></video>
-    </td>
-  </tr>
   <tr>
     <td>
        sing
