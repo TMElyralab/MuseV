@@ -1,0 +1,260 @@
+output_dir:
+  dev_mode: "dev" # train, test, dev  # invalide parameter
+  exp_dir: "./experiments/musev_referencenet_example"
+  add_time_to_exp_dir: False # 如果True，会变成 %Y%m%d-%H:%M:%S_exp_dir.basename
+  log_dir: ${.exp_dir}/log
+  samples: ${.exp_dir}/samples
+  inv_latents: ${.exp_dir}/inv_latents
+  checkpoints: ${.exp_dir}/checkpoints
+  track_init: True
+  only_validation: False
+  report_to: "tensorboard"
+  profiler:
+    use: False
+    wait: 10
+    warmup: 3
+    active: 3
+    repeat: 1
+    record_shapes: False
+    with_stack: False
+    profile_memory : False
+    with_flops : False
+    with_modules : True
+    use_cuda: True
+
+model:
+  # ------------------unet start---------------------
+  # pretrained_model_path: "/cfs-datasets/public_models/huggingface/diffusers/stable-diffusion-v1-4"
+  pretrained_model_path: "./checkpoints/t2i/sd1.5/fantasticmix_v10"
+  # pretrained_unet_path: "./checkpoints/motion/musev"
+  pretrained_unet_path: "./checkpoints/motion/musev_referencenet/"
+  temporal_conv_block:  "TemporalConvLayer"
+  # temporal_conv_block:  null
+  temporal_transformer: "TransformerTemporalModel" 
+  train_unet: True
+  trainable_modules:
+    - "temp_convs"
+    - "temp_attentions"
+    - "transformer_in"
+    - "frame_embedding"
+    - "spatial_position_embedding"
+    - "to_k_ip"
+    - "to_v_ip"
+    - "refer_emb_attns"
+  cross_attention_dim: 768
+  need_transformer_in: False # 是否需要 第一个 temporal_transformer_block
+  need_t2i_ip_adapter: True # T2I 模块是否需要面向视觉条件帧的 attn
+  # t2i attn_processor的优化版，需配合need_t2i_ip_adapter使用，
+  # 有 NonParam 表示无参ReferenceOnly-attn，没有表示有参 IpAdapter
+  t2i_ip_adapter_attn_processor: "NonParamReferenceIPXFormersAttnProcessor" # T2I SelfAttn相关，如视觉条件帧、referencenet_emb
+  t2i_crossattn_ip_adapter_attn_processor: T2IReferencenetIPAdapterXFormersAttnProcessor # t2i cross attn
+  # t2i_crossattn_ip_adapter_attn_processor: null
+  need_adain_temporal_cond: True # 是否需要面向首帧 使用Adain
+  keep_vision_condtion: True # 是否对视觉条件帧不加 timestep emb
+  use_anivv1_cfg: True # 一些基本配置 是否延续AnivV设计
+  need_zero_vis_cond_temb: True # 目前无效参数
+  resnet_2d_skip_time_act: True # 配合use_anivv1_cfg，修改 transformer 2d block
+  need_spatial_position_emb: False # 是否需要 spatial hw 的emb，需要配合 thw attn使用
+  norm_spatial_length: True # 是否需要 norm_spatial_length，只有当 need_spatial_position_emb= True时,才有效
+  spatial_max_length: 2048 # 归一化长度
+  need_ip_adapter_cross_attn: True # 之前设计存在不足，新增了盖变量单独用于控制 t2i_cross_attn
+  prompt_only_use_image_prompt: False # 当没有IPAdapterCrossAttn时，是否用 image_emb代替 text_emb
+  only_need_block_embs_adain: False # 目前无效
+  # ------------------unet end---------------------
+
+  # ----------------------------vae_model_path start---------------------------
+  vae_model_path: ./checkpoints/vae/sd-vae-ft-mse
+  need_vae_module: False # 如果只是需要vae的参数，可以False省点显存
+  # ----------------------------vae_model_path end-----------------------------
+
+  # ------------------consistency loss start---------------------
+  need_video_viscond_loss: False
+  # T2I中 x0的noise二范数 从xt-xi>x0是逐渐减少的过程，但不是0，是0.2左右的值。
+  video_viscond_loss_weight: 0.05
+  pixel_video_viscond_loss_weight: 0.05
+
+  video_inter_frames_timestep_th: 0.3
+  need_video_inter_frames_loss: False
+  video_inter_frames_loss_type: MSE
+  video_inter_frames_loss_weight: 0.05
+  pixel_video_inter_frames_loss_weight: 0.01
+  # TODO: use_pixel_loss True 时容易爆显存，目前只能尽量降低 batch_size、 n_sample_frames
+  use_pixel_loss: False
+
+  need_viscond_loss: False
+  viscond_loss_weight: 0.01
+  # ------------------consistency loss end---------------------
+
+  # ------------------controlnet start---------------------
+  use_controlnet_pipeline: False
+  controlnet_name: dwpose
+  include_body: true
+  include_face: False
+  hand_and_face: null
+  include_hand: true
+    # subfolder: "checkpoints" # only need for controlnet_segmention
+  controlnet_scale: 1.0
+  # ------------------controlnet end---------------------
+
+  # ------------------referencenet start---------------------
+  use_referencenet: True
+  # use_referencenet: False
+  referencenet_params:
+    referencenet: "ReferenceNet2D"
+    pretrained_model_path: ${..pretrained_unet_path}/referencenet/diffusion_pytorch_model.bin
+    subfolder: referencenet
+    is_train: True
+    need_self_attn_block_embs: False
+    need_block_embs: True
+  # ------------------referencenet end---------------------
+
+  # ------------------ vision_clip_extracor 独立于 IPAdapter 单独设置 start
+  vision_clip_extractor_class_name: ImageClipVisionFeatureExtractor
+  vision_clip_model_path: ./checkpoints/IP-Adapter/models/image_encoder
+  # ------------------ vision_clip_extracor 独立于 IPAdapter 单独设置 end
+
+  # ------------------ip_adapter cross_attn  参数仅是 vision_emb_proj start---------------------
+  ip_adapter_cross_attn: True
+  ip_adapter_params: 
+    ip_adapter_model_name: IPAdapter
+    ip_image_encoder: "./checkpoints/IP-Adapter/models/image_encoder"
+    pretrained_model_path: ${..pretrained_unet_path}/ip_adapter_image_proj.bin
+    cross_attention_dim: ${..cross_attention_dim}
+    clip_extra_context_tokens: 4
+    clip_embeddings_dim: 1024
+    train_ip_adapter_image_proj: True
+    train_ip_adapter_attn: True
+    ip_scale: 1.0
+  # ------------------ip_adapter cross_attn  参数仅是 vision_emb_proj end---------------------
+
+# 总batch_size = train_batch_size * gpu_num * gradient_accumulation_steps
+train:
+  train_batch_size: 1 # 单机
+  checkpointing_steps: 500 # 500 
+  # gradient_accumulation_steps 按8卡估计，实际使用了16卡*2accumulation*7单卡batch_size = 224 batch_size
+  gradient_accumulation_steps: 4
+  save_checkpoint: True
+  save_final_pipeline: True # 如果不需要，可以配合VAE的设置节约VAE的显存
+  dataloader_num_workers: 4
+  # noise_type: "random"
+  noise_type: "video_fusion"
+
+  # train
+  learning_rate: 1e-5 # 1e-4有时候能收敛，有时候会训崩
+  scale_lr: false
+  lr_scheduler: "constant"
+  lr_warmup_steps: 0
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  adam_weight_decay: 1e-2
+  adam_epsilon: 1e-8
+  max_grad_norm: 1.0
+  max_train_steps: 100000 
+  mixed_precision: fp16
+  use_8bit_adam: False
+  gradient_checkpointing: True
+  enable_xformers_memory_efficient_attention: True
+  noise_offset: null # # typical value is 0.1
+  seed: 33
+  resume_from_checkpoint: latest
+  testing_speed: False
+  checkpoints_total_limit: 30
+  get_midway_ckpt: false  # 复制output文件夹里的config.yaml，设置get_midway_ckpt=True
+    # 与resume_from_checkpoint=checkpoint-xxx
+
+dataset:
+  dataset: '${include:train_webvid.yaml}'
+  vae_emb_key: "CompVis_stable-diffusion-v1-4_vae_w=${.dataset.width}_h=${.dataset.height}_encoder_quant_emb"
+  vision_sample_index_key: "CompVis_stable-diffusion-v1-4_vae_w=${.dataset.width}_h=${.dataset.height}_sample_indexs"
+  vision_clip_emb_key: "CLIPVisionModelWithProjection_ip_adapter_w=${.dataset.width}_h=${.dataset.height}_image_embeds"
+  contronet_emb_keys: null # controlnet视觉条件帧
+    # - h5py_key: "lllyasviel_control_v11p_sd15_openpose_w=${...dataset.width}_h=${...dataset.height}_emb"
+    #   name: "controlnet_pose"
+  controlnet_kps_num_candidates: 20
+  text_idx: 0
+  prompt_emb_key: "CompVis_stable-diffusion-v1-4_CLIPEncoderLayer_last_hidden_state_${.text_idx}" 
+  # "tag" # text/tag是个变长字符串列表, prompt_emb_key的后缀与该列表中的字符串文本一一对应。这里text_idx是用的ucf101的tag，而不是prompt，
+  prompt_key: "tag"
+  feat_key: "${.vae_emb_key}"
+  n_sample_frames: 12 # 训练时，从h5py中读取的 帧数,包含 n_sample_condition_frames的几帧
+  n_sample_condition_frames: 1 # 
+  n_refer_image: 1 # 都是视觉条件帧，只不过走referencenet网络
+  max_n_refer_image: 4 # 动态数量的n_refer_image，最大数，暂时用不上
+  n_vision_condition: "${.n_sample_condition_frames}"
+  max_n_vision_condition: 1 # 最大条件帧 数量，若==n_vision_condition，表示条件帧数量=1
+  first_element_prob: 0.5 # 视觉条件帧区间【n_vision_condition， max_n_vision_condition】，=n_vision_condition的采样概率，其他数值评分剩余概率
+  sample_n_viscond_method: focus_1st # union, focus_1st
+  # condition_sample_method 训练时从 h5py中采样区分sample / condition sample的方法
+  condition_sample_method:  "first_in_last_out" # "first_in_first_out", "first_in_last_out", "random"
+  sample_start_idx: null # 采样的开始位置，Dataset中增加了动态起始帧机制
+  video2emb_sr: 2 # 从视频到 h5py emb时的采样帧率
+  sample_frame_rate: 4 # h5py emb2训练数据的采样帧率，真实的帧率是 video2emb_sr * sample_frame_rate
+  max_sample_frame_rate: 8 # 对每个样板进行动态 sample_frame_rate 采样
+  use_dynamic_sr: True  # 是否动态变化采样帧率
+  tail_frame_prob: 0 # 是否增加尾帧训练方式，【0，1】，大于0 表示条件帧支持尾帧
+  change_n_viscond_in_dataset: False
+  add_viscond_timestep_noise: False  # 是否在训练过程中给 视觉条件帧 加噪
+  viscond_timestep_noise_min: 0 # 最小加噪 timestep
+  viscond_timestep_noise_max: 100 # 最大加噪 timestep
+  shuffle: true
+  # text 是否uncond 训练，概率性 text_emb 变成 uncond_prompt 的emb
+  prob_uncond: 0.1
+  uncond_prompt: ""
+  # text 是否 镜头负样本训练，概率性 text_emb 变成 static_video+prompt emb
+  static_video_prompt: "static video, "
+  dynamic_video_prompt: "dynamic video, "
+  # prob_static_video: 0.05 
+  prob_static_video: 0 
+
+diffusion:
+  num_inference_steps: 10
+  guidance_scale: 7.5
+  use_inv_latent: False
+  num_inv_steps: 50
+
+validation_data:
+  do_validation: True
+  datas: '${include:testcase_train.yaml}'
+  prefix_prompt: ""
+  suffix_prompt: ""
+  # suffix_prompt: ", beautiful, masterpiece, best quality"
+  # negative_prompt: "nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, tail, watermarks"
+  negative_prompt: "badhandv4, ng_deepnegative_v1_75t, (((multiple heads))), (((bad body))), (((two people))), ((extra arms)), ((deformed body)), (((sexy))), paintings,(((two heads))), ((big head)),sketches, (worst quality:2), (low quality:2), (normal quality:2), lowres, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, glans, (((nsfw))), nipples, extra fingers, (extra legs), (long neck), mutated hands, (fused fingers), (too many fingers)"
+  negative_embedding: [['./checkpoints/embedding/badhandv4.pt', 'badhandv4'],
+                     ['./checkpoints/embedding/ng_deepnegative_v1_75t.pt', 'ng_deepnegative_v1_75t']]
+  n_cols: 1 # 每一个视频，有多少种生成内容，例如 原视频、controlnet cond、生成视频、video2video redraw、时序超分辨等，和测试数据对应就好
+  fps: 4
+  split_size_or_sections: 20 # 最终拼接视频中，最多有几个子视频，避免视频太大导致的内存相关问题
+  overwrite: False
+  # val
+  validation_steps: "${train.checkpointing_steps}"
+  # validation_steps: 5
+  width: "${dataset.dataset.width}"  
+  # width: 512
+  height: "${dataset.dataset.height}"
+  # height: 512
+  sample_frame_rate: 4
+  n_sample_frames: "${dataset.n_sample_frames}" 
+  # n_sample_frames: 16 # 注意sample_frame_rate 的设置可能会使得有的video帧数不够而报错。
+  video_length: "${.n_sample_frames}" # 推断时，生成的帧数，会提前减去 n_sample_condition_frames 作为 pipeline的参数
+  n_sample_condition_frames: "${dataset.n_sample_condition_frames}" 
+  # sample_frame_rate: "${dataset.sample_frame_rate}"
+  sample_start_idx: "${dataset.sample_start_idx}"
+  condition_sample_method: "${dataset.condition_sample_method}"
+  noise_type: "${train.noise_type}"
+  num_inference_steps: 30 #跑首帧的步数
+  video_num_inference_steps: 10 # 跑视频的步数
+  guidance_scale: 7.5 # 跑首帧的参数
+  video_guidance_scale: 3.5 # 跑视频的参数
+  output_file_format: mp4 #gif
+  include_body: "${model.include_body}"
+  include_face: "${model.include_face}"
+  hand_and_face: "${model.hand_and_face}"
+  include_hand: "${model.include_hand}"
+  n_video_batch: 1 # 跑几个batch
+  need_img_based_video_noise: true # 是否需要首帧残余后续视频噪声
+  need_redraw: False # 是否需要重绘生成的视频
+  redraw_condition_image: False  # 是否默认重绘，在测试数据中可以单独定义
+  n_vision_condition: 1 # 第2个batch以后使用的多视觉条件帧数量
+  need_video2video: False # False=video_middle2video, True=Video+Middle2video
+  write_info: True

@@ -1,0 +1,11 @@
+- name: "dance"
+  prompt: "a bald man wearing a floral shirt is dancing, full-size photograph"
+  video_path: ./data/source_video/video1_girl_poseseq.mp4
+  condition_images: ./data/images/cyber_girl.png
+  refer_image: ${.condition_images}
+  ipadapter_image: ${.condition_images}
+  height: 960
+  width: 512
+  img_length_ratio: 1.0
+  video_is_middle: True # if true, means video_path is controlnet condition, not natural rgb video
+  prompt_only_use_image_prompt: true

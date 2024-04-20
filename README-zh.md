@@ -335,7 +335,7 @@ Wenjiang Zhou
 
 # 待办事项：
 - [ ] 技术报告（即将推出）。
-- [ ] 训练代码。
+- [x] 训练代码。
 - [ ] 扩散变换生成框架。
 - [ ] `posealign` 模块。
 
@@ -505,6 +505,56 @@ python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --
 ```bash
 python scripts/inference/video2video.py --sd_model_name majicmixRealv6Fp16  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dance1   --fps 12 --time_size 12
 ```
+
+## 训练
+我们还没来得及整理训练代码，存在一些过期参数、待优化设计等问题。后续有时间，我们会慢慢优化、更新。
+
+### 数据集
+我们提供了示例数据集，可以在 [GoogleDriver](https://drive.google.com/file/d/1v8kdyMQAnUBUqi3QinLNIPRIbQqOdSyU/view?usp=drive_link) 或 [QuarkDriver](https://pan.quark.cn/s/065113969c22) 下载。下载完解压到路径 `MuseV/datasets`. 数据集目录结构应该如下
+```
+MuseV/datasets
+└── webvid
+    ├── csvs
+    │   └── train_webvid_10M_train_portrait_and_action_w=512_h=320_10.csv
+    ├── emb
+    │   └── train
+    │       └── 000001_000050
+    │           ├── 1066675432.h5py
+    └── video
+        └── train
+```
+我们是使用抽取好的特征训练生成网络，存储特征的h5py结构如下：
+```
+np CLIPVisionModelWithProjection_ip_adapter_w=512_h=320_image_embeds (150, 1024) float16 # 
+np CompVis_stable-diffusion-v1-4_CLIPEncoderLayer_last_hidden_state_0 (1, 77, 768) float16
+np CompVis_stable-diffusion-v1-4_vae_w=512_h=320_encoder_quant_emb (150, 8, 40, 64) float16
+np CompVis_stable-diffusion-v1-4_vae_w=512_h=320_sample_indexs (150,) uint32 # sample index from video
+np lllyasviel_control_v11p_sd15_openpose_dwpose_w=512_h=320_pose (150, 20, 134, 3) float32 # 
+np openai_clip_vit_large_patch14_ModelWithProjection_image_emb_w=512_h=320 (150, 768) float16
+```
+再次提醒：由于  [`webvid`](https://github.com/m-bain/webvid) 的版权问题，我们仅提供少量特征用于运行训练代码，我们不提供完整视频和完整的特征列表。
+
+### 自定义数据集
+可以参考 `Webvid` 制作新数据集.
+1. 准备数据集列表, 具体参考 `MuseV/datasets/webvid/csvs/train_webvid_10M_train_portrait_and_action_w=512_h=320_10.csv`.
+2. 参考脚本将数据集列表转化成特征抽取任务列表，具体参考 `MuseV/musev/data/webvid.py`.
+3. 特征抽取脚本支持新数据集特征抽取 ` ./scripts/extract_feature/extract_video_emb_with_multi_process.py`.
+4. 抽取特征
+```bash
+python ./scripts/extract_feature/extract_video_emb_with_multi_process.py  -task_path ./datasets/webvid/csvs/train_webvid_10M_train_portrait_and_action_w=512_h=320_10.csv   -h5py_dir ./datasets/webvid/emb/train/ -video_dir ./datasets/webvid/video/train -target_width 512 -target_height 320 -source webvid --sep , --n_process 1
+```
+
+### 训练
+在 `MuseV` 目录下运行训练脚本
+```bash
+accelerate launch train.py --config ./configs/train/musev_referencenet_train_template.yaml`,
+```
+训练中推断有bug，效果不如脚本推断好。待后续解决。
+
+### GPU cost
+1. `musev_referencenet`, `video shape = 1*3*12*320*512`, 单卡需要 `30G` GPU. 多卡由于通信原因需要更多.
+2.  `musev`:, `video shape = 4*3*12*320*512`, 单卡需要 `30G` GPU. Mult. 多卡由于通信原因需要更多.
+训练中可以通过设置 `do_validation=False` 跳过训练中推断的步骤，节约显存.
 
 ### Gradio 演示
 MuseV 提供 gradio 脚本，可在本地机器上生成 GUI，方便生成视频。

@@ -1,0 +1,8 @@
+dataset_dir: "./datasets/webvid/"
+video_dir: ${.dataset_dir}/video
+emb_dir: ${.dataset_dir}/emb/train
+csv_path: "${.dataset_dir}/csvs/train_webvid_10M_train_portrait_and_action_w=512_h=320_10.csv"
+sep: ","
+h5py_key: "emb_path"
+width: 512
+height: 320

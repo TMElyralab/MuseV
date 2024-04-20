@@ -34,8 +34,8 @@ Update: We have released <a href="https://github.com/TMElyralab/MuseTalk" style=
 1. `musev_referencenet_pose`: model_name of `unet`, `ip_adapter` of Command is not correct, please use `musev_referencenet_pose` instead of `musev_referencenet`.
 
 # News
-- [03/27/2024] release `MuseV` project and trained model `musev`, `muse_referencenet`.
-- [03/30/2024] add huggingface space gradio to generate video in gui
+- [03/27/2024] release `MuseV` project and trained model `musev`, `muse_referencenet`, `muse_referencenet_pose`.
+- [03/30/2024] add huggingface space gradio to generate video in gui.
 
 ## Model
 ### Overview of model structure
@@ -331,8 +331,7 @@ The character of talk, `Sun Xinying` is a supermodel KOL. You can follow her on 
 
 # TODO:
 - [ ] technical report (comming soon).
-- [ ] training codes.
-- [ ] release pretrained unet model, which is trained with controlnet、referencenet、IPAdapter, which is better on pose2video.
+- [x] training codes.
 - [ ] support diffusion transformer generation framework.
 - [ ] release `posealign` module
 
@@ -507,6 +506,57 @@ python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --
 ```bash
 python scripts/inference/video2video.py --sd_model_name fantasticmix_v10  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dance1   --fps 12 --time_size 12
 ```
+
+## train
+The code has not been organized yet, so modifying it may be quite troublesome. We will gradually optimize when we have time later.
+
+### dataset
+Download example dataset from [GoogleDriver](https://drive.google.com/file/d/1v8kdyMQAnUBUqi3QinLNIPRIbQqOdSyU/view?usp=drive_link) or [QuarkDriver](https://pan.quark.cn/s/065113969c22), and unzip to `MuseV/datasets`. The data structure is 
+```
+./datasets
+└── webvid
+    ├── csvs
+    │   └── train_webvid_10M_train_portrait_and_action_w=512_h=320_10.csv
+    ├── emb
+    │   └── train
+    │       └── 000001_000050
+    │           ├── 1066675432.h5py
+    └── video
+        └── train
+```
+The extracted feature structure in h5py is 
+```
+np CLIPVisionModelWithProjection_ip_adapter_w=512_h=320_image_embeds (150, 1024) float16 # 
+np CompVis_stable-diffusion-v1-4_CLIPEncoderLayer_last_hidden_state_0 (1, 77, 768) float16
+np CompVis_stable-diffusion-v1-4_vae_w=512_h=320_encoder_quant_emb (150, 8, 40, 64) float16
+np CompVis_stable-diffusion-v1-4_vae_w=512_h=320_sample_indexs (150,) uint32 # sample index from video
+np lllyasviel_control_v11p_sd15_openpose_dwpose_w=512_h=320_pose (150, 20, 134, 3) float32 # 
+np openai_clip_vit_large_patch14_ModelWithProjection_image_emb_w=512_h=320 (150, 768) float16
+```
+Note that, because of copyright of [`webvid`](https://github.com/m-bain/webvid), we only provide `10` extracted features as training dataset example.
+
+### Custom dataset
+Use `Webvid` as example.
+1. prepare dataset csv, refer to `MuseV/datasets/webvid/csvs/train_webvid_10M_train_portrait_and_action_w=512_h=320_10.csv`.
+2. implement methods to convert csv into tasks, refer to `MuseV/musev/data/webvid.py`.
+3. support custom dataset, refer to ` ./scripts/extract_feature/extract_video_emb_with_multi_process.py`.
+4. extract dataset emb.
+```bash
+python ./scripts/extract_feature/extract_video_emb_with_multi_process.py  -task_path ./datasets/webvid/csvs/train_webvid_10M_train_portrait_and_action_w=512_h=320_10.csv   -h5py_dir ./datasets/webvid/emb/train/ -video_dir ./datasets/webvid/video/train -target_width 512 -target_height 320 -source webvid --sep , --n_process 1
+```
+
+### train
+Workdir in  in `MuseV`, run train script
+```bash
+accelerate launch train.py --config ./configs/train/musev_referencenet_train_template.yaml`,
+```
+Inference code has bug in training stage.
+
+### GPU cost
+1. `musev_referencenet`, `video shape = 1*3*12*320*512`, single gpu needs `30G` GPU. Multi GPU needs more GPU for communication.
+2.  `musev`:, `video shape = 4*3*12*320*512`, single gpu needs about `30G`. Multi GPU needs more GPU for communication.
+
+To save gpu memory, set `do_validation=False` to skip inference during training stage.
 
 ### Gradio demo
 MuseV provides gradio script to generate a GUI in a local machine to generate video conveniently. 
