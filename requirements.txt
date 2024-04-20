@@ -92,5 +92,5 @@ xlsxwriter
 cuid
 spaces
 # https://mirrors.cloud.tencent.com/pypi/packages/de/a6/a49d5af79a515f5c9552a26b2078d839c40fcf8dccc0d94a1269276ab181/tb_nightly-2.1.0a20191022-py3-none-any.whl
-# basicsr
+basicsr
 # numpy==1.23.5
