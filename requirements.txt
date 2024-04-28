@@ -34,7 +34,6 @@ mediapipe==0.10.3
 cython==3.0.2
 easydict
 gdown
-infomap==2.7.1
 insightface==0.7.3
 ipython
 librosa==0.10.1
