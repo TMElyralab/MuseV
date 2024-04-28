@@ -16,8 +16,8 @@ import torch
 
 # logging.basicConfig(level=logging.DEBUG)
 
-from videocreation.data.image_text_emb_extractor import ImageTextEmbExtractor
-from videocreation.data.data_task import generate_tasks
+from musev.data.image_text_emb_extractor import ImageTextEmbExtractor
+from musev.data.data_task import generate_tasks
 from mmcm.utils.process_util import run_pipeline
 
 
