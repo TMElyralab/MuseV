@@ -109,7 +109,6 @@ dependencies:
     - imageio-ffmpeg==0.4.8
     - importlib-metadata==7.0.1
     - importlib-resources==6.1.1
-    - infomap==2.7.1
     - iniconfig==2.0.0
     - insightface==0.7.3
     - invisible-watermark==0.1.5

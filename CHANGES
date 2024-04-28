@@ -1,0 +1,5 @@
+Version 1.0.0 (2024.03.27)
+
+ * init musev, support video generation with text and image
+ * controlnet_aux: enrich interface and function of dwpose.
+ * diffusers: controlnet support latent instead of images only.
