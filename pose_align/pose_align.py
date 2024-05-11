@@ -525,11 +525,11 @@ def main():
     parser.add_argument('--polyorder', type=int, default=1, help='polyorder')
 
     parser.add_argument('--max_frame', type=int, default=100, help='maximum frame number of the video to align')
-    parser.add_argument('--vidfn', type=str, default="/workspace/user_code/projects/PoseAlign/videos/full/chen.mp4", required=True, help='Input video path')
-    parser.add_argument('--imgfn_refer', type=str, default="/workspace/user_code/projects/PoseAlign/images/full/gibbon.jpg", required=True, help='refer image path')
-    parser.add_argument('--outfn_ref_img_pose', type=str, default="./data/pose_align_results/ref_img_pose.jpg", required=True, help='output path of the pose of the refer img')
-    parser.add_argument('--outfn_align_pose_video', type=str, default=None, required=True, help='output path of the aligned video of the refer img')
-    parser.add_argument('--outfn', type=str, default=None, required=True, help='Output path of the alignment visualization')
+    parser.add_argument('--vidfn', type=str, default="./data/source_video/dance.mp4", help='Input video path')
+    parser.add_argument('--imgfn_refer', type=str, default="./data/images/man.jpg", help='refer image path')
+    parser.add_argument('--outfn_ref_img_pose', type=str, default="./data/pose_align_results/ref_img_pose.jpg", help='output path of the pose of the refer img')
+    parser.add_argument('--outfn_align_pose_video', type=str, default="./data/pose_align_results/align_pose_video.mp4", help='output path of the aligned video of the refer img')
+    parser.add_argument('--outfn', type=str, default="./data/pose_align_results/align_demo.mp4", help='Output path of the alignment visualization')
     args = parser.parse_args()
 
     # args.imgfn_refer="/workspace/user_code/projects/PoseAlign/images/full/gibbon.jpg"
