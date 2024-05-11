@@ -430,7 +430,12 @@ python ./pose_align/pose_align.py --max_frame 200 --vidfn ./data/source_video/da
 
 
 
-then you can use the aligned pose `outfn_align_pose_video` for pose guided generation. You may change the config yaml in ./configs/tasks/example.yaml
+https://github.com/TMElyralab/MuseV/assets/47803475/787d7193-ec69-43f4-a0e5-73986a808f51
+
+
+
+
+then you can use the aligned pose `outfn_align_pose_video` for pose guided generation. You may need to modify the example in the config file `./configs/tasks/example.yaml`
 ##### generation
 ```bash
 python scripts/inference/video2video.py --sd_model_name fantasticmix_v10  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dance1   --fps 12 --time_size 12
