@@ -428,6 +428,8 @@ python ./pose_align/pose_align.py --max_frame 200 --vidfn ./data/source_video/da
 - `outfn_align_pose_video`: output path of the aligned video of the refer img
 - `outfn`: output path of the alignment visualization
 
+
+
 then you can use the aligned pose `outfn_align_pose_video` for pose guided generation. You may change the config yaml in ./configs/tasks/example.yaml
 ##### generation
 ```bash
