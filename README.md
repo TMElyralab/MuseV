@@ -417,6 +417,19 @@ Only has motion module, no referencenet, requiring less gpu memory.
 python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --unet_model_name musev   -test_data_path ./configs/tasks/example.yaml  --output_dir ./output  --n_batch 1  --target_datas yongen  --time_size 12 --fps 12
 ```
 #### video2video
+##### pose align
+```bash
+python ./pose_align/pose_align.py --max_frame 200 --vidfn ./data/source_video/dance.mp4 --imgfn_refer ./data/images/man.jpg --outfn_ref_img_pose ./data/pose_align_results/ref_img_pose.jpg --outfn_align_pose_video ./data/pose_align_results/align_pose_video.mp4 --outfn ./data/pose_align_results/align_demo.mp4
+```
+- `max_frame`: how many frames to align (count from the first frame)
+- `vidfn`：real dance video in rgb
+- `imgfn_refer`: refer image path
+- `outfn_ref_img_pose`: output path of the pose of the refer img
+- `outfn_align_pose_video`: output path of the aligned video of the refer img
+- `outfn`: output path of the alignment visualization
+
+then you can use the aligned pose `outfn_align_pose_video` for pose guided generation. You may change the config yaml in ./configs/tasks/example.yaml
+##### generation
 ```bash
 python scripts/inference/video2video.py --sd_model_name fantasticmix_v10  --unet_model_name musev    -test_data_path ./configs/tasks/example.yaml --output_dir ./output  --n_batch 1 --controlnet_name dwpose_body_hand  --which2video "video_middle"  --target_datas  dance1   --fps 12 --time_size 12
 ```
