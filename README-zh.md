@@ -27,7 +27,7 @@ Wenjiang Zhou
 1. 支持使用新颖的视觉条件并行去噪方案进行无限长度生成，不会再有误差累计的问题，尤其适用于固定相机位的场景。
 1. 提供了基于人物类型数据集训练的虚拟人视频生成预训练模型。
 1. 支持图像到视频、文本到图像到视频、视频到视频的生成。
-1. 兼容 `Stable Diffusio`n 文图生成生态系统，包括 `base_model`、`lora`、`controlnet` 等。
+1. 兼容 `Stable Diffusion` 文图生成生态系统，包括 `base_model`、`lora`、`controlnet` 等。
 1. 支持多参考图像技术，包括 `IPAdapter`、`ReferenceOnly`、`ReferenceNet`、`IPAdapterFaceID`。
 1. 我们后面也会推出训练代码。
 
