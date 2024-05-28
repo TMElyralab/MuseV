@@ -20,6 +20,8 @@ Wenjiang Zhou
 
 我们已经发布 <a href="https://github.com/TMElyralab/MuseTalk" style="font-size:24px; color:red;">MuseTalk</a>. `MuseTalk`是一个实时高质量的唇同步模型，可与 `MuseV` 一起构建完整的`虚拟人生成解决方案`。请保持关注！
 
+:new: 我们新发布了<a href="https://github.com/TMElyralab/MusePose" style="font-size:24px; color:red;">MusePose</a>。 MusePose是一个用于虚拟人物的图像到视频生成框架，它可以根据控制信号（姿态）生成视频。结合 MuseV 和 MuseTalk，我们希望社区能够加入我们，一起迈向一个愿景：能够端到端生成具有全身运动和交互能力的虚拟人物。
+
 # 概述
 
 `MuseV` 是基于扩散模型的虚拟人视频生成框架，具有以下特点：
