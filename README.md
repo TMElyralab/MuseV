@@ -12,6 +12,7 @@ Yingjie He,
 Wenjiang Zhou
 (<sup>*</sup>co-first author, <sup>†</sup>Corresponding Author, benbinwu@tencent.com)
 </font>
+Lyra Lab, Tencent Music Entertainment
 
 **[github](https://github.com/TMElyralab/MuseV)**    **[huggingface](https://huggingface.co/TMElyralab/MuseV)**  **[HuggingfaceSpace](https://huggingface.co/spaces/AnchorFake/MuseVDemo)**  **[project](https://tmelyralab.github.io/MuseV_Page/)**    **Technical report (comming soon)**
 
