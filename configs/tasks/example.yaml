@@ -32,14 +32,14 @@
   width: 563
 - condition_images: ./data/images/seaside4.jpeg
   eye_blinks_factor: 1.8
-  height: 317
+  height: 564
   img_length_ratio: 2.221
   ipadapter_image: ${.condition_images}
   name: seaside4
   prompt: (masterpiece, best quality, highres:1), peaceful beautiful sea scene
   refer_image: ${.condition_images}
   video_path: null
-  width: 564
+  width: 317
 - condition_images: ./data/images/seaside_girl.jpeg
   eye_blinks_factor: 1.8
   height: 736
@@ -100,7 +100,7 @@
   refer_image: ${.condition_images}
   video_path: null
   width: 471
-- condition_images: ./data/images/Mona_Lisa..jpg
+- condition_images: ./data/images/Mona_Lisa.jpg
   eye_blinks_factor: 1.8
   height: 894
   img_length_ratio: 1.173

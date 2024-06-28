@@ -1059,7 +1059,10 @@ class UNet3DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin)
                     f"self.first_refer_emb_attns, {self.first_refer_emb_attns.__class__.__name__} {down_block_refer_embs[0].shape}"
                 )
             sample = self.first_refer_emb_attns(
-                sample, down_block_refer_embs[0], num_frames=num_frames
+                sample,
+                down_block_refer_embs[0],
+                num_frames=num_frames,
+                do_classifier_free_guidance=do_classifier_free_guidance,
             )
             if self.print_idx == 0:
                 logger.debug(
@@ -1117,6 +1120,7 @@ class UNet3DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin)
                     refer_embs=this_down_block_refer_embs,
                     refer_self_attn_emb=refer_self_attn_emb,
                     refer_self_attn_emb_mode=refer_self_attn_emb_mode,
+                    do_classifier_free_guidance=do_classifier_free_guidance,
                 )
             else:
                 sample, res_samples = downsample_block(
@@ -1130,6 +1134,7 @@ class UNet3DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin)
                     refer_embs=this_down_block_refer_embs,
                     refer_self_attn_emb=refer_self_attn_emb,
                     refer_self_attn_emb_mode=refer_self_attn_emb_mode,
+                    do_classifier_free_guidance=do_classifier_free_guidance,
                 )
 
             # resize spatial_position_emb
@@ -1183,7 +1188,10 @@ class UNet3DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin)
                     f"self.mid_block_refer_emb_attns={self.mid_block_refer_emb_attns}, mid_block_refer_emb={mid_block_refer_emb.shape}"
                 )
             sample = self.mid_block_refer_emb_attns(
-                sample, mid_block_refer_emb, num_frames=num_frames
+                sample,
+                mid_block_refer_emb,
+                num_frames=num_frames,
+                do_classifier_free_guidance=do_classifier_free_guidance,
             )
             if self.print_idx == 0:
                 logger.debug(

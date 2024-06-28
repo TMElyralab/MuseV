@@ -303,19 +303,19 @@ class BasicTransformerBlock(DiffusersBasicTransformerBlock):
             ),
         )
 
-        if self.use_ada_layer_norm_zero:
-            attn_output = gate_msa.unsqueeze(1) * attn_output
-        hidden_states = attn_output + hidden_states
-
-        # 推断的时候，对于uncondition_部分独立生成，排除掉 refer_emb，
-        # 首帧等的影响，避免生成参考了refer_emb、首帧等，又在uncond上去除了
-        # in inference stage, eliminate influence of refer_emb, vis_cond on unconditionpart
-        # to avoid use that, and then eliminate in pipeline
+        # ---------------do_classifier_free_guidance start -------------------------
+        # 推断的时候，对于uncondition 部分独立生成，排除掉 refer_emb 首帧等的影响
+        # 目前经验对于 musev 架构，
+        # 单独考虑该部分、只使用视觉条件帧、不使用refer_emb效果更好；
+        # 在 13block 处时 uncond 去除 ref_emb 影响效果会更好；
+        # 但两者同时存在时，效果很多时候会更好，少数时候会差些。
+        # in inference stage, eliminate influence of refer_emb, vis_cond on uncondition part
         # refer to moore-animate anyone
+        # it seems it's not necessary for musev architecture
 
-        # do_classifier_free_guidance = False
         if self.print_idx == 0:
             logger.debug(f"do_classifier_free_guidance={do_classifier_free_guidance},")
+
         if do_classifier_free_guidance:
             hidden_states_c = attn_output.clone()
             _uc_mask = (
@@ -326,12 +326,40 @@ class BasicTransformerBlock(DiffusersBasicTransformerBlock):
                 .to(norm_hidden_states.device)
                 .bool()
             )
+            uncond_self_attention_kwargs = (
+                cross_attention_kwargs
+                if isinstance(self.attn1.processor, BaseIPAttnProcessor)
+                else original_cross_attention_kwargs
+            )
+            uncond_self_attention_kwargs = {
+                k: v
+                for k, v in uncond_self_attention_kwargs.items()
+                if k
+                not in [
+                    "refer_emb",
+                    "face_emb",
+                    "ip_adapter_face_emb",
+                    "vision_clip_emb",
+                ]
+            }
+
+            # 方便直接去除 uncond_self_attention_kwargs 的影响
+            # uncond_self_attention_kwargs = {}
+
             hidden_states_c[_uc_mask] = self.attn1(
                 norm_hidden_states[_uc_mask],
-                encoder_hidden_states=norm_hidden_states[_uc_mask],
+                encoder_hidden_states=norm_hidden_states[_uc_mask]
+                if self.only_cross_attention
+                else None,
                 attention_mask=attention_mask,
+                **uncond_self_attention_kwargs,
             )
             attn_output = hidden_states_c.clone()
+        # ---------------do_classifier_free_guidance end -------------------------
+
+        if self.use_ada_layer_norm_zero:
+            attn_output = gate_msa.unsqueeze(1) * attn_output
+        hidden_states = attn_output + hidden_states
 
         if "refer_emb" in cross_attention_kwargs:
             del cross_attention_kwargs["refer_emb"]

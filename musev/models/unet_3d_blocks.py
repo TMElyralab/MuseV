@@ -607,6 +607,7 @@ class CrossAttnDownBlock3D(nn.Module):
         refer_embs: Optional[List[torch.Tensor]] = None,
         refer_self_attn_emb: List[torch.Tensor] = None,
         refer_self_attn_emb_mode: Literal["read", "write"] = "read",
+        do_classifier_free_guidance: bool = False,
     ):
         # TODO(Patrick, William) - attention mask is not used
         output_states = ()
@@ -735,7 +736,10 @@ class CrossAttnDownBlock3D(nn.Module):
                         f"{i_downblock}, self.refer_emb_attns {refer_embs[i_downblock].shape}"
                     )
                 hidden_states = self.refer_emb_attns[i_downblock](
-                    hidden_states, refer_embs[i_downblock], num_frames=num_frames
+                    hidden_states,
+                    refer_embs[i_downblock],
+                    num_frames=num_frames,
+                    do_classifier_free_guidance=do_classifier_free_guidance,
                 )
             else:
                 if self.print_idx == 0:
@@ -765,7 +769,10 @@ class CrossAttnDownBlock3D(nn.Module):
             if self.need_refer_emb and refer_embs is not None:
                 i_downblock += 1
                 hidden_states = self.refer_emb_attns[i_downblock](
-                    hidden_states, refer_embs[i_downblock], num_frames=num_frames
+                    hidden_states,
+                    refer_embs[i_downblock],
+                    num_frames=num_frames,
+                    do_classifier_free_guidance=do_classifier_free_guidance,
                 )
             output_states += (hidden_states,)
         self.print_idx += 1
@@ -893,6 +900,7 @@ class DownBlock3D(nn.Module):
         refer_embs: Optional[Tuple[torch.Tensor]] = None,
         refer_self_attn_emb: List[torch.Tensor] = None,
         refer_self_attn_emb_mode: Literal["read", "write"] = "read",
+        do_classifier_free_guidance: bool = False,
     ):
         output_states = ()
 
@@ -952,7 +960,10 @@ class DownBlock3D(nn.Module):
                 )
             if self.need_refer_emb and refer_embs is not None:
                 hidden_states = self.refer_emb_attns[i_downblock](
-                    hidden_states, refer_embs[i_downblock], num_frames=num_frames
+                    hidden_states,
+                    refer_embs[i_downblock],
+                    num_frames=num_frames,
+                    do_classifier_free_guidance=do_classifier_free_guidance,
                 )
             output_states += (hidden_states,)
 
@@ -976,7 +987,10 @@ class DownBlock3D(nn.Module):
             if self.need_refer_emb and refer_embs is not None:
                 i_downblock += 1
                 hidden_states = self.refer_emb_attns[i_downblock](
-                    hidden_states, refer_embs[i_downblock], num_frames=num_frames
+                    hidden_states,
+                    refer_embs[i_downblock],
+                    num_frames=num_frames,
+                    do_classifier_free_guidance=do_classifier_free_guidance,
                 )
             output_states += (hidden_states,)
         self.print_idx += 1

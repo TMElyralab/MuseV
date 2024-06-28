@@ -634,6 +634,55 @@ class ReferEmbFuseAttention(IPAttention):
         temb: Optional[torch.FloatTensor] = None,
         scale: float = 1.0,
         num_frames: int = None,
+        do_classifier_free_guidance: bool = False,
+    ) -> torch.Tensor:
+        # do attn with q=hidden_states, k/v=encoder_hidden_states
+        attn_output = self._forward(
+            hidden_states,
+            encoder_hidden_states,
+            attention_mask,
+            temb,
+            scale,
+            num_frames,
+            whether_concat=True,
+        )
+
+        # ---------------do_classifier_free_guidance start -------------------------
+        # 推断的时候，对于uncondition 部分独立生成，排除掉 refer_emb 首帧等的影响
+        # in inference stage, eliminate influence of refer_emb, vis_cond on uncondition part
+
+        # do attn with q=hidden_states uncond, k/v= hidden_states uncond
+        if do_classifier_free_guidance:
+            hidden_states_c = attn_output.clone()
+            _uc_mask = (
+                torch.Tensor(
+                    [1] * (hidden_states.shape[0] // 2)
+                    + [0] * (hidden_states.shape[0] // 2)
+                )
+                .to(hidden_states.device)
+                .bool()
+            )
+            hidden_states_c[_uc_mask] = self._forward(
+                hidden_states[_uc_mask],
+                encoder_hidden_states=None,
+                attention_mask=attention_mask,
+                temb=temb,
+                scale=scale,
+                num_frames=num_frames,
+                whether_concat=False,
+            )
+            attn_output = hidden_states_c.clone()
+        return attn_output
+
+    def _forward(
+        self,
+        hidden_states: torch.FloatTensor,
+        encoder_hidden_states: Optional[torch.FloatTensor] = None,
+        attention_mask: Optional[torch.FloatTensor] = None,
+        temb: Optional[torch.FloatTensor] = None,
+        scale: float = 1.0,
+        num_frames: int = None,
+        whether_concat: bool = True,
     ) -> torch.Tensor:
         """fuse referencenet emb b c t2 h2 w2  into unet latents b c t1 h1 w1 with attn
         refer to musev/models/attention_processor.py::NonParamT2ISelfReferenceXFormersAttnProcessor
@@ -645,7 +694,7 @@ class ReferEmbFuseAttention(IPAttention):
             temb (Optional[torch.FloatTensor], optional): _description_. Defaults to None.
             scale (float, optional): _description_. Defaults to 1.0.
             num_frames (int, optional): _description_. Defaults to None.
-
+            whether_concat: whether concat encoder_hidden_states with hidden_states in token channel (b n q).
         Returns:
             torch.Tensor: _description_
         """
@@ -659,22 +708,26 @@ class ReferEmbFuseAttention(IPAttention):
             logger.debug(
                 f"hidden_states={hidden_states.shape},encoder_hidden_states={encoder_hidden_states.shape}"
             )
-        # concat  with hidden_states b c t1 h1 w1 in  hw channel into bt  (t2 + 1)hw c
-        encoder_hidden_states = rearrange(
-            encoder_hidden_states, " b c t2 h w-> b (t2 h w) c"
-        )
-        encoder_hidden_states = repeat(
-            encoder_hidden_states, " b t2hw c -> (b t) t2hw c", t=t1
-        )
-        hidden_states = rearrange(hidden_states, " b c t h w-> (b t) (h w) c")
-        # bt (t2+1)hw d
-        encoder_hidden_states = torch.concat(
-            [encoder_hidden_states, hidden_states], dim=1
-        )
-        # encoder_hidden_states = align_repeat_tensor_single_dim(
-        #     encoder_hidden_states, target_length=hidden_states.shape[0], dim=0
-        # )
-        # end
+        # when whether_concat is None, should set encoder_hidden_states
+        if whether_concat:
+            # concat  with hidden_states b c t1 h1 w1 in  hw channel into bt  (t2 + 1)hw c
+            encoder_hidden_states = rearrange(
+                encoder_hidden_states, " b c t2 h w-> b (t2 h w) c"
+            )
+            encoder_hidden_states = repeat(
+                encoder_hidden_states, " b t2hw c -> (b t) t2hw c", t=t1
+            )
+            hidden_states = rearrange(hidden_states, " b c t h w-> (b t) (h w) c")
+            # bt (t2+1)hw d
+            encoder_hidden_states = torch.concat(
+                [encoder_hidden_states, hidden_states], dim=1
+            )
+            # encoder_hidden_states = align_repeat_tensor_single_dim(
+            #     encoder_hidden_states, target_length=hidden_states.shape[0], dim=0
+            # )
+            # end
+        else:
+            hidden_states = rearrange(hidden_states, " b c t h w-> (b t) (h w) c")
 
         if self.spatial_norm is not None:
             hidden_states = self.spatial_norm(hidden_states, temb)
