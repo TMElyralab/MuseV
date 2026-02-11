@@ -298,7 +298,7 @@ class TransformerTemporalModel(ModelMixin, ConfigMixin):
             if self.need_temporal_weight:
                 output = residual + torch.abs(self.temporal_weight) * hidden_states
             else:
-                output = residual + mask * hidden_states
+                output = residual + hidden_states
 
         # output = torch.abs(self.temporal_weight) * hidden_states + residual
         output = rearrange(output, "b c t h w -> (b t) c h w")
